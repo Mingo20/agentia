@@ -2,441 +2,346 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<meta name="theme-color" content="#1a73e8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
+<meta name="theme-color" content="#25D366">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Agentia">
-<meta name="description" content="Automatiza tu negocio desde WhatsApp con IA">
+<meta name="description" content="Tu asistente IA para docentes dominicanos — por WhatsApp">
 <link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="icons/icon-192.png">
-<title>Agentia — Tu Agente IA por WhatsApp</title>
-<link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<title>Agentia — Asistente IA para Docentes</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-font-smoothing:antialiased}
 :root{
-  --primary:#1a73e8;
-  --primary-dark:#1557b0;
-  --primary-light:#e8f0fe;
-  --green:#34a853;
-  --green-light:#e6f4ea;
-  --surface:#ffffff;
-  --bg:#f8f9fa;
-  --on-surface:#202124;
-  --on-surface-2:#5f6368;
-  --on-surface-3:#80868b;
-  --border:#dadce0;
-  --shadow-sm:0 1px 3px rgba(0,0,0,0.1),0 1px 2px rgba(0,0,0,0.06);
-  --shadow-md:0 4px 16px rgba(0,0,0,0.08);
-  --shadow-lg:0 8px 32px rgba(0,0,0,0.12);
-  --radius-sm:8px;
-  --radius-md:12px;
-  --radius-lg:20px;
-  --radius-xl:28px;
+  --p:#25D366;--pd:#128C7E;--pl:#e8f5e9;--p2:#1ebe5d;
+  --surface:#fff;--bg:#f7faf8;--on:#1a1a1a;--on2:#4a5568;--on3:#9aa5b1;
+  --border:#e2e8f0;--radius:14px;--radius-lg:22px;--radius-xl:32px;
+  --shadow:0 2px 12px rgba(0,0,0,0.07);--shadow-lg:0 8px 40px rgba(0,0,0,0.11);
+  --trans:all .28s cubic-bezier(.4,0,.2,1);
 }
-html{scroll-behavior:smooth;font-size:16px}
-body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--on-surface);min-height:100vh;overflow-x:hidden}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--on);overflow-x:hidden}
 
-/* ---- NAVBAR ---- */
-.navbar{
-  position:fixed;top:0;left:0;right:0;z-index:100;
-  background:rgba(255,255,255,0.95);backdrop-filter:blur(20px);
-  border-bottom:1px solid var(--border);
-  padding:0 24px;height:64px;
-  display:flex;align-items:center;justify-content:space-between;
-}
+/* NAV */
+.nav{position:fixed;top:0;left:0;right:0;z-index:99;height:62px;background:rgba(255,255,255,.96);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;justify-content:space-between;transition:var(--trans)}
 .nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none}
-.nav-logo-icon{width:36px;height:36px;background:var(--primary);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px}
-.nav-logo-text{font-size:18px;font-weight:700;color:var(--on-surface);letter-spacing:-0.3px}
-.nav-logo-text span{color:var(--primary)}
-.nav-actions{display:flex;align-items:center;gap:8px}
-.btn-ghost{background:none;border:none;padding:8px 16px;border-radius:20px;font-size:14px;font-weight:500;color:var(--on-surface-2);cursor:pointer;transition:all .2s}
-.btn-ghost:hover{background:var(--bg);color:var(--on-surface)}
-.btn-primary{background:var(--primary);color:#fff;border:none;padding:8px 20px;border-radius:20px;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;text-decoration:none;display:inline-flex;align-items:center}
-.btn-primary:hover{background:var(--primary-dark);box-shadow:0 2px 8px rgba(26,115,232,0.4)}
+.nav-logo img{width:36px;height:36px;border-radius:10px;object-fit:cover}
+.nav-logo-name{font-size:17px;font-weight:800;color:var(--on);letter-spacing:-.3px}
+.nav-logo-name span{color:var(--p)}
+.nav-right{display:flex;gap:8px;align-items:center}
+.btn-nav-ghost{background:none;border:none;padding:8px 14px;border-radius:20px;font-size:14px;font-weight:500;color:var(--on2);cursor:pointer;transition:var(--trans)}
+.btn-nav-ghost:hover{background:var(--pl);color:var(--pd)}
+.btn-nav-primary{background:var(--p);color:#fff;border:none;padding:9px 20px;border-radius:22px;font-size:14px;font-weight:700;cursor:pointer;transition:var(--trans)}
+.btn-nav-primary:hover{background:var(--pd);transform:translateY(-1px);box-shadow:0 4px 16px rgba(37,211,102,.35)}
 
-/* ---- HERO ---- */
-.hero{
-  min-height:100vh;padding:88px 24px 60px;
-  display:flex;align-items:center;justify-content:center;
-  background:linear-gradient(180deg,#fff 0%,var(--bg) 100%);
-}
-.hero-inner{max-width:900px;width:100%;text-align:center}
-.hero-chip{
-  display:inline-flex;align-items:center;gap:8px;
-  background:var(--green-light);color:var(--green);
-  padding:6px 16px;border-radius:20px;font-size:13px;font-weight:600;
-  margin-bottom:28px;
-}
-.hero-chip-dot{width:8px;height:8px;background:var(--green);border-radius:50%;animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(1.2)}}
-.hero-title{
-  font-size:clamp(36px,6vw,64px);font-weight:800;
-  color:var(--on-surface);line-height:1.1;letter-spacing:-1.5px;
-  margin-bottom:20px;
-}
-.hero-title span{color:var(--primary)}
-.hero-sub{
-  font-size:clamp(16px,2.5vw,20px);color:var(--on-surface-2);
-  line-height:1.6;max-width:580px;margin:0 auto 40px;font-weight:400;
-}
-.hero-cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:56px}
-.btn-hero{
-  padding:14px 32px;border-radius:50px;font-size:16px;font-weight:600;
-  cursor:pointer;transition:all .25s;border:none;text-decoration:none;display:inline-flex;align-items:center;gap:8px;
-}
-.btn-hero-primary{background:var(--primary);color:#fff}
-.btn-hero-primary:hover{background:var(--primary-dark);transform:translateY(-2px);box-shadow:0 6px 24px rgba(26,115,232,0.35)}
-.btn-hero-outline{background:#fff;color:var(--on-surface);border:1.5px solid var(--border)}
-.btn-hero-outline:hover{border-color:var(--primary);color:var(--primary);transform:translateY(-2px)}
+/* HERO */
+.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:82px 24px 60px;background:linear-gradient(170deg,#fff 0%,#f0fbf4 100%)}
+.hero-inner{max-width:880px;width:100%;text-align:center}
+.hero-chip{display:inline-flex;align-items:center;gap:8px;background:var(--pl);color:var(--pd);padding:7px 18px;border-radius:22px;font-size:13px;font-weight:700;margin-bottom:28px;border:1px solid rgba(37,211,102,.2)}
+.chip-dot{width:7px;height:7px;background:var(--p);border-radius:50%;animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.hero-title{font-size:clamp(34px,7vw,66px);font-weight:900;line-height:1.08;letter-spacing:-2px;color:var(--on);margin-bottom:18px}
+.hero-title em{color:var(--p);font-style:normal}
+.hero-sub{font-size:clamp(15px,2.5vw,19px);color:var(--on2);line-height:1.65;max-width:520px;margin:0 auto 36px;font-weight:400}
+.hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:52px}
+.btn-hero{padding:14px 32px;border-radius:50px;font-size:16px;font-weight:700;cursor:pointer;transition:var(--trans);border:none;display:inline-flex;align-items:center;gap:8px}
+.btn-hero-g{background:var(--p);color:#fff}
+.btn-hero-g:hover{background:var(--pd);transform:translateY(-2px);box-shadow:0 6px 24px rgba(37,211,102,.4)}
+.btn-hero-o{background:#fff;color:var(--on);border:1.5px solid var(--border)}
+.btn-hero-o:hover{border-color:var(--p);color:var(--p);transform:translateY(-2px)}
+.hero-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;max-width:420px;margin:0 auto}
+.hstat{background:#fff;border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px 12px;text-align:center;transition:var(--trans)}
+.hstat:hover{border-color:var(--p);transform:translateY(-3px);box-shadow:var(--shadow)}
+.hstat-n{font-size:26px;font-weight:900;color:var(--p);letter-spacing:-1px}
+.hstat-l{font-size:11px;color:var(--on3);margin-top:3px;font-weight:500}
 
-/* Stats */
-.hero-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:480px;margin:0 auto}
-.stat{background:#fff;border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px 16px;text-align:center}
-.stat-num{font-size:28px;font-weight:800;color:var(--primary);letter-spacing:-1px}
-.stat-label{font-size:12px;color:var(--on-surface-3);margin-top:4px;font-weight:500}
+/* MASCOT */
+.mascot-wrap{position:relative;display:inline-block;margin-bottom:32px}
+.mascot-img{width:110px;height:110px;object-fit:contain;filter:drop-shadow(0 8px 24px rgba(37,211,102,.3));animation:float 4s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.mascot-badge{position:absolute;bottom:-4px;right:-4px;background:var(--p);color:#fff;font-size:10px;font-weight:700;padding:3px 8px;border-radius:10px;border:2px solid #fff}
 
-/* ---- SECTIONS ---- */
-section{padding:80px 24px}
-.section-inner{max-width:960px;margin:0 auto}
-.section-label{font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--primary);margin-bottom:12px}
-.section-title{font-size:clamp(28px,4vw,40px);font-weight:800;color:var(--on-surface);line-height:1.2;letter-spacing:-0.5px;margin-bottom:16px}
-.section-sub{font-size:16px;color:var(--on-surface-2);line-height:1.6;max-width:560px}
+/* SECTIONS */
+.sec{padding:80px 24px}
+.sec-in{max-width:960px;margin:0 auto}
+.sec-label{font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--p);margin-bottom:10px}
+.sec-title{font-size:clamp(26px,4vw,40px);font-weight:800;color:var(--on);line-height:1.2;letter-spacing:-.5px;margin-bottom:14px}
+.sec-sub{font-size:15px;color:var(--on2);line-height:1.65;max-width:540px}
 
-/* ---- FEATURES ---- */
-.features-bg{background:#fff}
-.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:48px}
-.feat-card{
-  background:var(--bg);border:1px solid var(--border);
-  border-radius:var(--radius-lg);padding:28px 24px;
-  transition:all .25s;cursor:default;
-}
-.feat-card:hover{border-color:var(--primary);background:#fff;transform:translateY(-3px);box-shadow:var(--shadow-md)}
-.feat-icon{width:48px;height:48px;border-radius:14px;background:var(--primary-light);display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:16px}
-.feat-title{font-size:16px;font-weight:700;color:var(--on-surface);margin-bottom:8px}
-.feat-desc{font-size:14px;color:var(--on-surface-2);line-height:1.6}
+/* FEATURES */
+.feat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px;margin-top:44px}
+.feat-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius-lg);padding:28px 22px;transition:var(--trans);cursor:default}
+.feat-card:hover{border-color:var(--p);transform:translateY(-4px);box-shadow:0 8px 32px rgba(37,211,102,.12)}
+.feat-icon-wrap{width:50px;height:50px;background:var(--pl);border-radius:14px;display:flex;align-items:center;justify-content:center;margin-bottom:16px}
+.feat-icon-wrap svg{width:26px;height:26px}
+.feat-title{font-size:15px;font-weight:700;margin-bottom:7px;color:var(--on)}
+.feat-desc{font-size:13px;color:var(--on2);line-height:1.6}
 
-/* ---- HOW ---- */
-.how-steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:24px;margin-top:48px;position:relative}
-.step{text-align:center;padding:32px 20px}
-.step-num{
-  width:52px;height:52px;border-radius:50%;
-  background:var(--primary);color:#fff;
-  font-size:20px;font-weight:800;
-  display:flex;align-items:center;justify-content:center;
-  margin:0 auto 20px;box-shadow:0 4px 16px rgba(26,115,232,0.3);
-}
-.step-title{font-size:16px;font-weight:700;margin-bottom:8px}
-.step-desc{font-size:14px;color:var(--on-surface-2);line-height:1.6}
+/* HOW */
+.how-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:20px;margin-top:44px}
+.step-card{text-align:center;padding:28px 16px}
+.step-n{width:50px;height:50px;border-radius:50%;background:var(--p);color:#fff;font-size:18px;font-weight:900;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;box-shadow:0 4px 16px rgba(37,211,102,.3)}
+.step-title{font-size:15px;font-weight:700;margin-bottom:7px}
+.step-desc{font-size:13px;color:var(--on2);line-height:1.6}
 
-/* ---- PRICING ---- */
-.pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:48px;align-items:start}
-.price-card{background:#fff;border:1.5px solid var(--border);border-radius:var(--radius-xl);padding:32px 28px;transition:all .25s;position:relative}
-.price-card:hover{border-color:var(--primary);box-shadow:var(--shadow-lg)}
-.price-card.popular{border-color:var(--primary);box-shadow:0 0 0 4px rgba(26,115,232,0.08)}
-.popular-badge{
-  position:absolute;top:-14px;left:50%;transform:translateX(-50%);
-  background:var(--primary);color:#fff;
-  font-size:12px;font-weight:700;padding:4px 16px;border-radius:20px;
-  white-space:nowrap;
-}
-.price-plan{font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--on-surface-3);margin-bottom:12px}
-.price-amount{font-size:42px;font-weight:800;color:var(--on-surface);letter-spacing:-1.5px;line-height:1}
-.price-currency{font-size:18px;font-weight:600;vertical-align:top;margin-top:8px;display:inline-block}
-.price-period{font-size:14px;color:var(--on-surface-3);margin-left:4px}
-.price-desc{font-size:14px;color:var(--on-surface-2);margin:12px 0 24px;line-height:1.5}
-.price-features{list-style:none;margin-bottom:28px}
-.price-features li{font-size:14px;color:var(--on-surface-2);padding:8px 0;border-bottom:1px solid var(--bg);display:flex;align-items:center;gap:10px}
-.price-features li:last-child{border-bottom:none}
-.check{color:var(--green);font-size:16px;font-weight:700;flex-shrink:0}
-.btn-plan{width:100%;padding:13px;border-radius:50px;font-size:15px;font-weight:600;cursor:pointer;transition:all .2s;border:none}
-.btn-plan-primary{background:var(--primary);color:#fff}
-.btn-plan-primary:hover{background:var(--primary-dark);box-shadow:0 4px 16px rgba(26,115,232,0.3)}
-.btn-plan-outline{background:#fff;color:var(--primary);border:1.5px solid var(--primary)}
-.btn-plan-outline:hover{background:var(--primary-light)}
+/* DASHBOARD */
+.dash{background:#fff;border:1px solid var(--border);border-radius:var(--radius-xl);overflow:hidden;box-shadow:var(--shadow-lg);margin-top:44px}
+.dash-top{background:linear-gradient(135deg,var(--p),var(--pd));padding:18px 22px;display:flex;align-items:center;justify-content:space-between}
+.dash-top-l{display:flex;align-items:center;gap:12px}
+.dash-avatar{width:38px;height:38px;background:rgba(255,255,255,.2);border-radius:10px;display:flex;align-items:center;justify-content:center}
+.dash-avatar svg{width:22px;height:22px}
+.dash-name{font-size:14px;font-weight:700;color:#fff}
+.dash-plan{font-size:11px;color:rgba(255,255,255,.75)}
+.dash-pill{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.15);padding:5px 12px;border-radius:20px}
+.dash-pill-dot{width:7px;height:7px;background:#a8ff78;border-radius:50%;animation:blink 2s infinite}
+.dash-pill-txt{font-size:12px;color:#fff;font-weight:600}
+.dash-body{padding:20px}
+.kpi-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:18px}
+.kpi{background:var(--bg);border-radius:var(--radius);padding:14px}
+.kpi-n{font-size:24px;font-weight:900;letter-spacing:-.5px;color:var(--on)}
+.kpi-l{font-size:11px;color:var(--on3);margin-top:2px;font-weight:500}
+.kpi-t{font-size:11px;color:var(--p);font-weight:600;margin-top:3px}
+.chart-label{font-size:12px;font-weight:600;color:var(--on2);margin-bottom:10px}
+.bars{display:flex;align-items:flex-end;gap:5px;height:52px;margin-bottom:18px}
+.bar{flex:1;border-radius:4px 4px 0 0;background:var(--pl);transition:height .6s ease}
+.bar.hi{background:var(--p)}
+.qr-row{background:var(--bg);border-radius:var(--radius);padding:14px;display:flex;align-items:center;gap:14px}
+.qr-box{width:58px;height:58px;background:#fff;border:1px solid var(--border);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.qr-box svg{width:36px;height:36px}
+.qr-info-t{font-size:13px;font-weight:700;margin-bottom:3px}
+.qr-info-s{font-size:11px;color:var(--on3);line-height:1.4}
+.btn-qr-small{margin-top:7px;background:var(--p);color:#fff;border:none;padding:5px 12px;border-radius:12px;font-size:11px;font-weight:700;cursor:pointer}
 
-/* ---- DASHBOARD PREVIEW ---- */
-.dash-preview{
-  background:#fff;border:1px solid var(--border);
-  border-radius:var(--radius-xl);overflow:hidden;
-  box-shadow:var(--shadow-lg);margin-top:48px;
-}
-.dash-header{
-  background:var(--primary);padding:16px 24px;
-  display:flex;align-items:center;justify-content:space-between;
-}
-.dash-header-left{display:flex;align-items:center;gap:12px}
-.dash-avatar{width:36px;height:36px;background:rgba(255,255,255,0.2);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px}
-.dash-company{font-size:15px;font-weight:600;color:#fff}
-.dash-role{font-size:12px;color:rgba(255,255,255,0.7)}
-.dash-status{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.15);padding:6px 12px;border-radius:20px}
-.dash-status-dot{width:8px;height:8px;background:#34a853;border-radius:50%;animation:pulse 2s infinite}
-.dash-status-text{font-size:12px;color:#fff;font-weight:500}
-.dash-body{padding:24px}
-.dash-kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:20px}
-.kpi{background:var(--bg);border-radius:var(--radius-md);padding:16px}
-.kpi-num{font-size:26px;font-weight:800;color:var(--on-surface);letter-spacing:-0.5px}
-.kpi-label{font-size:12px;color:var(--on-surface-3);margin-top:2px;font-weight:500}
-.kpi-trend{font-size:11px;color:var(--green);font-weight:600;margin-top:4px}
-.dash-chart-label{font-size:13px;font-weight:600;color:var(--on-surface-2);margin-bottom:12px}
-.dash-bars{display:flex;align-items:flex-end;gap:6px;height:60px;margin-bottom:20px}
-.bar{flex:1;border-radius:4px 4px 0 0;background:var(--primary-light);transition:all .3s;min-height:8px}
-.bar.active{background:var(--primary)}
-.dash-qr-section{background:var(--bg);border-radius:var(--radius-md);padding:16px;display:flex;align-items:center;gap:16px}
-.qr-mock{width:64px;height:64px;background:#fff;border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:32px;flex-shrink:0}
-.qr-info-title{font-size:14px;font-weight:600;margin-bottom:4px}
-.qr-info-sub{font-size:12px;color:var(--on-surface-3);line-height:1.4}
-.qr-btn{margin-top:8px;background:var(--primary);color:#fff;border:none;padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer}
+/* PRICING */
+.price-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px;margin-top:44px;align-items:start}
+.price-card{background:#fff;border:1.5px solid var(--border);border-radius:var(--radius-xl);padding:30px 26px;transition:var(--trans);position:relative}
+.price-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg)}
+.price-card.pop{border-color:var(--p);box-shadow:0 0 0 4px rgba(37,211,102,.08)}
+.pop-badge{position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:var(--p);color:#fff;font-size:11px;font-weight:800;padding:4px 14px;border-radius:20px;white-space:nowrap}
+.price-tier{font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--on3);margin-bottom:10px}
+.price-amt{font-size:40px;font-weight:900;letter-spacing:-1.5px;line-height:1}
+.price-cur{font-size:16px;font-weight:700;vertical-align:top;margin-top:6px;display:inline-block}
+.price-per{font-size:13px;color:var(--on3);margin-left:3px}
+.price-desc{font-size:13px;color:var(--on2);margin:10px 0 20px;line-height:1.5}
+.price-list{list-style:none;margin-bottom:24px}
+.price-list li{font-size:13px;color:var(--on2);padding:7px 0;border-bottom:1px solid var(--bg);display:flex;align-items:center;gap:9px}
+.price-list li:last-child{border:none}
+.pcheck{color:var(--p);font-weight:800;font-size:14px;flex-shrink:0}
+.btn-price{width:100%;padding:12px;border-radius:50px;font-size:14px;font-weight:700;cursor:pointer;transition:var(--trans);border:none}
+.btn-price-g{background:var(--p);color:#fff}
+.btn-price-g:hover{background:var(--pd);box-shadow:0 4px 16px rgba(37,211,102,.3)}
+.btn-price-o{background:#fff;color:var(--p);border:1.5px solid var(--p)}
+.btn-price-o:hover{background:var(--pl)}
+.btn-free{background:linear-gradient(135deg,#f0fdf4,#dcfce7);color:var(--pd);border:1.5px solid rgba(37,211,102,.3)}
+.btn-free:hover{background:var(--pl);transform:translateY(-1px)}
 
-/* ---- REGISTRO MODAL ---- */
-.modal-overlay{
-  display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);
-  backdrop-filter:blur(8px);z-index:200;
-  align-items:center;justify-content:center;padding:16px;
-}
-.modal-overlay.active{display:flex}
-.modal{
-  background:#fff;border-radius:var(--radius-xl);
-  width:100%;max-width:440px;overflow:hidden;
-  box-shadow:var(--shadow-lg);animation:slideUp .3s ease;
-}
-@keyframes slideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
-.modal-header{padding:24px 24px 0;display:flex;justify-content:space-between;align-items:center}
-.modal-title{font-size:20px;font-weight:700}
-.modal-close{width:32px;height:32px;border-radius:50%;background:var(--bg);border:none;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;color:var(--on-surface-2)}
-.modal-body{padding:24px}
-.modal-step{display:none}
-.modal-step.active{display:block}
+/* MODAL */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(10px);z-index:200;align-items:center;justify-content:center;padding:16px;opacity:0;transition:opacity .3s ease}
+.overlay.open{display:flex;opacity:1}
+.modal{background:#fff;border-radius:var(--radius-xl);width:100%;max-width:460px;overflow:hidden;box-shadow:var(--shadow-lg);transform:translateY(30px) scale(.97);transition:transform .35s cubic-bezier(.34,1.56,.64,1),opacity .3s;opacity:0}
+.overlay.open .modal{transform:translateY(0) scale(1);opacity:1}
+.modal-head{padding:22px 22px 0;display:flex;justify-content:space-between;align-items:center}
+.modal-title{font-size:19px;font-weight:800;color:var(--on)}
+.modal-x{width:30px;height:30px;border-radius:50%;background:var(--bg);border:none;cursor:pointer;font-size:16px;color:var(--on2);display:flex;align-items:center;justify-content:center;transition:var(--trans)}
+.modal-x:hover{background:var(--pl);color:var(--p)}
+.modal-body{padding:20px 22px 24px}
 
-/* Steps indicator */
-.steps-indicator{display:flex;align-items:center;gap:8px;margin-bottom:24px}
-.step-dot{width:8px;height:8px;border-radius:50%;background:var(--border);transition:all .3s}
-.step-dot.active{background:var(--primary);width:24px;border-radius:4px}
-.step-dot.done{background:var(--green)}
-.step-label{font-size:13px;color:var(--on-surface-3);margin-left:4px}
+/* Tabs */
+.tabs{display:flex;background:var(--bg);border-radius:var(--radius);padding:4px;margin-bottom:20px}
+.tab{flex:1;padding:8px;text-align:center;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;transition:var(--trans);border:none;background:none;color:var(--on3)}
+.tab.on{background:#fff;color:var(--p);box-shadow:var(--shadow)}
+
+/* Step indicator */
+.step-ind{display:flex;align-items:center;gap:6px;margin-bottom:20px}
+.sdot{width:8px;height:8px;border-radius:4px;background:var(--border);transition:var(--trans)}
+.sdot.on{background:var(--p);width:22px}
+.sdot.done{background:var(--p);opacity:.45}
+.slabel{font-size:12px;color:var(--on3);margin-left:4px;font-weight:500}
 
 /* Form */
-.form-group{margin-bottom:16px}
-.form-label{font-size:13px;font-weight:600;color:var(--on-surface);margin-bottom:6px;display:block}
-.form-input{
-  width:100%;padding:12px 16px;
-  border:1.5px solid var(--border);border-radius:var(--radius-md);
-  font-size:15px;font-family:inherit;color:var(--on-surface);
-  outline:none;transition:border-color .2s;background:#fff;
-}
-.form-input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(26,115,232,0.1)}
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.perfil-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:8px}
-.perfil-btn{
-  padding:14px 10px;border:1.5px solid var(--border);border-radius:var(--radius-md);
-  background:#fff;cursor:pointer;text-align:center;transition:all .2s;font-size:13px;font-weight:500;
-}
-.perfil-btn:hover,.perfil-btn.selected{border-color:var(--primary);background:var(--primary-light);color:var(--primary)}
-.perfil-emoji{font-size:24px;display:block;margin-bottom:4px}
+.fg{margin-bottom:14px}
+.flabel{font-size:12px;font-weight:700;color:var(--on);margin-bottom:5px;display:block;letter-spacing:.1px}
+.finput{width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:var(--radius);font-size:14px;font-family:inherit;color:var(--on);outline:none;transition:var(--trans);background:#fff}
+.finput:focus{border-color:var(--p);box-shadow:0 0 0 3px rgba(37,211,102,.1)}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.fselect{width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:var(--radius);font-size:14px;font-family:inherit;color:var(--on);outline:none;transition:var(--trans);background:#fff;appearance:none;cursor:pointer}
+.fselect:focus{border-color:var(--p);box-shadow:0 0 0 3px rgba(37,211,102,.1)}
+
+/* Nivel grid */
+.nivel-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:6px}
+.nivel-btn{padding:14px 10px;border:1.5px solid var(--border);border-radius:var(--radius);background:#fff;cursor:pointer;text-align:center;transition:var(--trans);font-size:12px;font-weight:600;color:var(--on2)}
+.nivel-btn:hover,.nivel-btn.sel{border-color:var(--p);background:var(--pl);color:var(--pd)}
+.nivel-emoji{display:block;margin-bottom:5px}
+
+/* Buttons */
+.btn-continue{width:100%;padding:13px;border-radius:50px;background:var(--p);color:#fff;font-size:15px;font-weight:700;cursor:pointer;border:none;transition:var(--trans);margin-top:6px}
+.btn-continue:hover{background:var(--pd);transform:translateY(-1px);box-shadow:0 4px 16px rgba(37,211,102,.35)}
+.btn-back{background:none;border:none;color:var(--on3);font-size:13px;cursor:pointer;padding:6px 0;display:flex;align-items:center;gap:4px;margin-bottom:10px;font-weight:500;transition:var(--trans)}
+.btn-back:hover{color:var(--p)}
+.btn-paypal{width:100%;padding:13px;border-radius:50px;background:linear-gradient(135deg,#0070ba,#003087);color:#fff;font-size:15px;font-weight:700;cursor:pointer;border:none;transition:var(--trans);display:flex;align-items:center;justify-content:center;gap:10px;margin-top:8px}
+.btn-paypal:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,112,186,.35)}
+.btn-free-main{width:100%;padding:13px;border-radius:50px;background:linear-gradient(135deg,#f0fdf4,#d1fae5);color:var(--pd);font-size:15px;font-weight:700;cursor:pointer;border:1.5px solid rgba(37,211,102,.3);transition:var(--trans);margin-top:8px}
+.btn-free-main:hover{background:var(--pl);transform:translateY(-1px)}
 
 /* Plan selector */
-.plan-select-grid{display:grid;gap:10px;margin-bottom:8px}
-.plan-select-btn{
-  padding:16px;border:1.5px solid var(--border);border-radius:var(--radius-md);
-  background:#fff;cursor:pointer;text-align:left;transition:all .2s;display:flex;justify-content:space-between;align-items:center;
-}
-.plan-select-btn:hover,.plan-select-btn.selected{border-color:var(--primary);background:var(--primary-light)}
-.plan-select-name{font-size:15px;font-weight:600;color:var(--on-surface)}
-.plan-select-price{font-size:15px;font-weight:700;color:var(--primary)}
-.plan-select-credits{font-size:12px;color:var(--on-surface-3);margin-top:2px}
+.plan-grid{display:grid;gap:8px;margin-bottom:6px}
+.plan-opt{padding:14px 16px;border:1.5px solid var(--border);border-radius:var(--radius);background:#fff;cursor:pointer;display:flex;justify-content:space-between;align-items:center;transition:var(--trans)}
+.plan-opt:hover,.plan-opt.sel{border-color:var(--p);background:var(--pl)}
+.plan-opt-l{text-align:left}
+.plan-opt-name{font-size:14px;font-weight:700;color:var(--on)}
+.plan-opt-credits{font-size:11px;color:var(--on3);margin-top:2px}
+.plan-opt-price{font-size:15px;font-weight:900;color:var(--p)}
+.plan-free-badge{font-size:10px;background:var(--p);color:#fff;padding:2px 8px;border-radius:8px;font-weight:700;margin-left:6px}
 
-/* QR Display */
+/* QR Step */
 .qr-display{text-align:center;padding:8px 0}
-.qr-big{
-  width:180px;height:180px;margin:0 auto 16px;
-  background:#fff;border:2px solid var(--border);border-radius:var(--radius-md);
-  display:flex;align-items:center;justify-content:center;
-  font-size:100px;position:relative;
-}
-.qr-loading{animation:spin 1s linear infinite}
+.qr-frame{width:172px;height:172px;margin:0 auto 16px;background:#fff;border:2px solid var(--border);border-radius:var(--radius-lg);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.qr-corners::before,.qr-corners::after{content:'';position:absolute;width:20px;height:20px;border-color:var(--p);border-style:solid}
+.qr-frame img{border-radius:10px;width:152px;height:152px}
+.spin{animation:spin 1.2s linear infinite;font-size:36px;color:var(--p)}
 @keyframes spin{to{transform:rotate(360deg)}}
-.qr-title{font-size:18px;font-weight:700;margin-bottom:8px}
-.qr-sub{font-size:14px;color:var(--on-surface-2);line-height:1.5;margin-bottom:16px}
-.qr-actions{display:flex;gap:10px;justify-content:center}
-.btn-qr{padding:10px 20px;border-radius:50px;font-size:14px;font-weight:600;cursor:pointer;border:none;transition:all .2s}
-.btn-qr-primary{background:var(--primary);color:#fff}
-.btn-qr-secondary{background:var(--bg);color:var(--on-surface);border:1.5px solid var(--border)}
+.qr-title{font-size:17px;font-weight:800;margin-bottom:6px}
+.qr-sub{font-size:13px;color:var(--on2);line-height:1.55;margin-bottom:16px}
+.qr-acts{display:flex;gap:8px;justify-content:center}
+.btn-qr-a{padding:9px 18px;border-radius:22px;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:var(--trans)}
+.btn-qr-g{background:var(--p);color:#fff}
+.btn-qr-g:hover{background:var(--pd)}
+.btn-qr-s{background:var(--bg);color:var(--on);border:1.5px solid var(--border)}
+.btn-qr-s:hover{border-color:var(--p);color:var(--p)}
 
-/* PayPal button */
-.btn-paypal{
-  width:100%;padding:14px;border-radius:50px;
-  background:linear-gradient(135deg,#0070ba,#003087);
-  color:#fff;font-size:15px;font-weight:700;
-  cursor:pointer;border:none;transition:all .25s;
-  display:flex;align-items:center;justify-content:center;gap:10px;
-}
-.btn-paypal:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,112,186,0.35)}
-.btn-continue{width:100%;padding:13px;border-radius:50px;background:var(--primary);color:#fff;font-size:15px;font-weight:600;cursor:pointer;border:none;transition:all .2s;margin-top:4px}
-.btn-continue:hover{background:var(--primary-dark)}
-.btn-back{background:none;border:none;color:var(--on-surface-3);font-size:14px;cursor:pointer;padding:8px 0;display:flex;align-items:center;gap:4px;margin-bottom:8px}
+/* Link */
+.link-green{color:var(--p);font-weight:600;cursor:pointer;text-decoration:none}
+.link-green:hover{text-decoration:underline}
 
-/* Auth tabs */
-.auth-tabs{display:flex;background:var(--bg);border-radius:var(--radius-md);padding:4px;margin-bottom:20px}
-.auth-tab{flex:1;padding:8px;text-align:center;border-radius:var(--radius-sm);font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;border:none;background:none;color:var(--on-surface-3)}
-.auth-tab.active{background:#fff;color:var(--primary);box-shadow:var(--shadow-sm)}
+/* PWA banner */
+.pwa-bar{display:none;position:fixed;bottom:16px;left:16px;right:16px;background:#fff;border:1px solid var(--border);border-radius:var(--radius-xl);padding:14px 18px;z-index:150;box-shadow:var(--shadow-lg);align-items:center;gap:14px;max-width:460px;margin:0 auto}
+.pwa-bar.show{display:flex}
+.pwa-icon-box{width:42px;height:42px;background:var(--p);border-radius:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.pwa-icon-box img{width:28px;height:28px;object-fit:contain}
+.pwa-t{flex:1}
+.pwa-t-title{font-size:13px;font-weight:700;margin-bottom:1px}
+.pwa-t-sub{font-size:11px;color:var(--on3)}
+.btn-pwa{background:var(--p);color:#fff;border:none;padding:7px 14px;border-radius:18px;font-size:12px;font-weight:700;cursor:pointer;flex-shrink:0}
+.pwa-x{background:none;border:none;color:var(--on3);cursor:pointer;font-size:16px;padding:4px;flex-shrink:0}
 
-/* ---- FOOTER ---- */
-footer{background:#fff;border-top:1px solid var(--border);padding:40px 24px}
-.footer-inner{max-width:960px;margin:0 auto;display:flex;flex-wrap:wrap;gap:32px;justify-content:space-between;align-items:center}
-.footer-brand{display:flex;align-items:center;gap:10px}
-.footer-brand-icon{width:32px;height:32px;background:var(--primary);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px}
-.footer-brand-name{font-size:16px;font-weight:700}
-.footer-links{display:flex;gap:24px;flex-wrap:wrap}
-.footer-link{font-size:14px;color:var(--on-surface-2);text-decoration:none}
-.footer-link:hover{color:var(--primary)}
-.footer-copy{font-size:13px;color:var(--on-surface-3)}
+/* FOOTER */
+footer{background:#fff;border-top:1px solid var(--border);padding:36px 24px}
+.foot-in{max-width:960px;margin:0 auto;display:flex;flex-wrap:wrap;gap:24px;justify-content:space-between;align-items:center}
+.foot-brand{display:flex;align-items:center;gap:10px}
+.foot-brand img{width:30px;height:30px;border-radius:8px;object-fit:cover}
+.foot-brand-name{font-size:15px;font-weight:800;color:var(--on)}
+.foot-brand-name span{color:var(--p)}
+.foot-links{display:flex;gap:20px;flex-wrap:wrap}
+.foot-link{font-size:13px;color:var(--on2);text-decoration:none;transition:var(--trans)}
+.foot-link:hover{color:var(--p)}
+.foot-copy{font-size:12px;color:var(--on3)}
 
-/* ---- PWA INSTALL BANNER ---- */
-.pwa-banner{
-  display:none;position:fixed;bottom:16px;left:16px;right:16px;
-  background:#fff;border:1px solid var(--border);border-radius:var(--radius-xl);
-  padding:16px 20px;z-index:150;box-shadow:var(--shadow-lg);
-  align-items:center;gap:16px;max-width:480px;margin:0 auto;
-}
-.pwa-banner.show{display:flex}
-.pwa-icon{width:44px;height:44px;background:var(--primary);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
-.pwa-text{flex:1}
-.pwa-title{font-size:14px;font-weight:700;margin-bottom:2px}
-.pwa-sub{font-size:12px;color:var(--on-surface-3)}
-.btn-install{background:var(--primary);color:#fff;border:none;padding:8px 16px;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;flex-shrink:0}
-.pwa-dismiss{background:none;border:none;color:var(--on-surface-3);cursor:pointer;font-size:18px;padding:4px;flex-shrink:0}
-
-/* ---- RESPONSIVE ---- */
+/* Responsive */
 @media(max-width:600px){
-  .navbar{padding:0 16px}
-  .nav-actions .btn-ghost{display:none}
-  section{padding:60px 16px}
-  .hero{padding:80px 16px 48px}
-  .hero-stats{grid-template-columns:repeat(3,1fr)}
-  .dash-kpis{grid-template-columns:repeat(2,1fr)}
-  .form-row{grid-template-columns:1fr}
-  .footer-inner{flex-direction:column;align-items:flex-start;gap:20px}
-  .footer-links{gap:16px}
+  .nav{padding:0 14px}
+  .btn-nav-ghost{display:none}
+  .sec{padding:56px 16px}
+  .hero{padding:76px 16px 48px}
+  .frow{grid-template-columns:1fr}
+  .kpi-grid{grid-template-columns:repeat(2,1fr)}
+  .foot-in{flex-direction:column;align-items:flex-start;gap:16px}
 }
 @media(min-width:768px){
-  .perfil-grid{grid-template-columns:repeat(3,1fr)}
-  .dash-kpis{grid-template-columns:repeat(4,1fr)}
+  .kpi-grid{grid-template-columns:repeat(4,1fr)}
+  .nivel-grid{grid-template-columns:repeat(4,1fr)}
 }
+
+/* Smooth page transitions */
+.fade-section{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease}
+.fade-section.visible{opacity:1;transform:translateY(0)}
 </style>
 </head>
 <body>
 
 <!-- NAVBAR -->
-<nav class="navbar">
+<nav class="nav">
   <a class="nav-logo" href="#">
-    <div class="nav-logo-icon">🤖</div>
-    <span class="nav-logo-text">Agentia<span>.ia</span></span>
+    <img src="https://media.base44.com/images/public/whatsapp/69bf571e53cddb8789552b4e/your_agent/69bf571e53cddb8789552b4f/9d74bec76_whatsapp_image_1705984577289343.jpg" alt="Agentia">
+    <span class="nav-logo-name">Agentia<span>.ia</span></span>
   </a>
-  <div class="nav-actions">
-    <button class="btn-ghost" onclick="openModal('login')">Iniciar sesión</button>
-    <button class="btn-primary" onclick="openModal('register')">Comenzar gratis</button>
+  <div class="nav-right">
+    <button class="btn-nav-ghost" onclick="openModal('login')">Iniciar sesión</button>
+    <button class="btn-nav-primary" onclick="openModal('register')">Comenzar gratis</button>
   </div>
 </nav>
 
 <!-- HERO -->
 <section class="hero">
   <div class="hero-inner">
-    <div class="hero-chip">
-      <span class="hero-chip-dot"></span>
-      Agentes activos ahora en RD 🇩🇴
+    <div class="mascot-wrap">
+      <img class="mascot-img" src="https://media.base44.com/images/public/whatsapp/69bf571e53cddb8789552b4e/your_agent/69bf571e53cddb8789552b4f/9d74bec76_whatsapp_image_1705984577289343.jpg" alt="Agentia mascota">
+      <span class="mascot-badge">IA Activa</span>
     </div>
-    <h1 class="hero-title">
-      Automatiza tu negocio<br>desde <span>WhatsApp</span>
-    </h1>
-    <p class="hero-sub">
-      Un agente IA personalizado trabaja 24/7 gestionando tus tareas administrativas. Sin apps, sin técnicos, solo escribe y él ejecuta.
-    </p>
-    <div class="hero-cta">
-      <button class="btn-hero btn-hero-primary" onclick="openModal('register')">
-        🚀 Activar mi agente
+    <div class="hero-chip"><span class="chip-dot"></span>Asistente IA exclusivo para docentes 🇩🇴</div>
+    <h1 class="hero-title">Tu asistente docente<br>opera desde <em>WhatsApp</em></h1>
+    <p class="hero-sub">Planificaciones, asistencia, calificaciones y más — todo automatizado en segundos desde tu celular. Alineado al currículo del MINERD.</p>
+    <div class="hero-btns">
+      <button class="btn-hero btn-hero-g" onclick="openModal('register')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        Comenzar gratis
       </button>
-      <button class="btn-hero btn-hero-outline" onclick="document.getElementById('como').scrollIntoView({behavior:'smooth'})">
-        Ver cómo funciona
-      </button>
+      <button class="btn-hero btn-hero-o" onclick="document.getElementById('como').scrollIntoView({behavior:'smooth'})">Ver cómo funciona →</button>
     </div>
     <div class="hero-stats">
-      <div class="stat">
-        <div class="stat-num">+50</div>
-        <div class="stat-label">Agentes activos</div>
-      </div>
-      <div class="stat">
-        <div class="stat-num">1hr</div>
-        <div class="stat-label">Setup rápido</div>
-      </div>
-      <div class="stat">
-        <div class="stat-num">24/7</div>
-        <div class="stat-label">Disponible</div>
-      </div>
+      <div class="hstat"><div class="hstat-n">+200</div><div class="hstat-l">Docentes activos</div></div>
+      <div class="hstat"><div class="hstat-n">1hr</div><div class="hstat-l">Setup rápido</div></div>
+      <div class="hstat"><div class="hstat-n">24/7</div><div class="hstat-l">Disponible</div></div>
     </div>
   </div>
 </section>
 
 <!-- DASHBOARD PREVIEW -->
-<section style="padding:0 24px 80px;background:#fff">
-  <div class="section-inner">
+<section class="sec fade-section" style="background:#fff;padding-top:0;padding-bottom:72px">
+  <div class="sec-in">
     <div style="text-align:center;margin-bottom:32px">
-      <div class="section-label">Panel de control</div>
-      <div class="section-title">Tu agente en tu bolsillo</div>
-      <p class="section-sub" style="margin:0 auto">Ve las estadísticas, accede a tu QR y monitorea todo desde tu teléfono.</p>
+      <div class="sec-label">Panel docente</div>
+      <div class="sec-title">Todo tu trabajo en una pantalla</div>
+      <p class="sec-sub" style="margin:0 auto">KPIs, actividad del agente y acceso a tu QR — siempre disponible.</p>
     </div>
-    <div class="dash-preview">
-      <div class="dash-header">
-        <div class="dash-header-left">
-          <div class="dash-avatar">🏪</div>
+    <div class="dash">
+      <div class="dash-top">
+        <div class="dash-top-l">
+          <div class="dash-avatar">
+            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </div>
           <div>
-            <div class="dash-company">Farmacia San José</div>
-            <div class="dash-role">Plan Profesional</div>
+            <div class="dash-name">Licda. Carmen Mejía</div>
+            <div class="dash-plan">Matemáticas · 4to Primaria · Plan Profesional</div>
           </div>
         </div>
-        <div class="dash-status">
-          <div class="dash-status-dot"></div>
-          <span class="dash-status-text">Agente activo</span>
-        </div>
+        <div class="dash-pill"><div class="dash-pill-dot"></div><span class="dash-pill-txt">Agente activo</span></div>
       </div>
       <div class="dash-body">
-        <div class="dash-kpis">
-          <div class="kpi">
-            <div class="kpi-num">147</div>
-            <div class="kpi-label">Tareas este mes</div>
-            <div class="kpi-trend">↑ 23% vs anterior</div>
-          </div>
-          <div class="kpi">
-            <div class="kpi-num">342</div>
-            <div class="kpi-label">Créditos restantes</div>
-            <div class="kpi-trend">de 500 totales</div>
-          </div>
-          <div class="kpi">
-            <div class="kpi-num">98%</div>
-            <div class="kpi-label">Uptime agente</div>
-            <div class="kpi-trend">Últimos 30 días</div>
-          </div>
-          <div class="kpi">
-            <div class="kpi-num">2.1s</div>
-            <div class="kpi-label">Resp. promedio</div>
-            <div class="kpi-trend">↓ Mejoró 0.4s</div>
-          </div>
+        <div class="kpi-grid">
+          <div class="kpi"><div class="kpi-n">47</div><div class="kpi-l">Tareas este mes</div><div class="kpi-t">↑ 18% vs anterior</div></div>
+          <div class="kpi"><div class="kpi-n">342</div><div class="kpi-l">Créditos restantes</div><div class="kpi-t">de 500 totales</div></div>
+          <div class="kpi"><div class="kpi-n">12</div><div class="kpi-l">Documentos generados</div><div class="kpi-t">Esta semana</div></div>
+          <div class="kpi"><div class="kpi-n">98%</div><div class="kpi-l">Uptime agente</div><div class="kpi-t">Últimos 30 días</div></div>
         </div>
-        <div class="dash-chart-label">Actividad semanal</div>
-        <div class="dash-bars">
-          <div class="bar" style="height:35%"></div>
+        <div class="chart-label">Actividad semanal</div>
+        <div class="bars">
+          <div class="bar" style="height:30%"></div>
+          <div class="bar" style="height:50%"></div>
+          <div class="bar" style="height:40%"></div>
+          <div class="bar hi" style="height:80%"></div>
           <div class="bar" style="height:55%"></div>
-          <div class="bar" style="height:45%"></div>
-          <div class="bar active" style="height:80%"></div>
-          <div class="bar" style="height:60%"></div>
-          <div class="bar" style="height:70%"></div>
-          <div class="bar active" style="height:90%"></div>
+          <div class="bar" style="height:65%"></div>
+          <div class="bar hi" style="height:90%"></div>
         </div>
-        <div class="dash-qr-section">
-          <div class="qr-mock">📱</div>
+        <div class="qr-row">
+          <div class="qr-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#25D366" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h.01M18 14h.01M14 18h.01M18 18h.01M16 16h.01"/></svg>
+          </div>
           <div style="flex:1">
-            <div class="qr-info-title">Tu código QR de acceso</div>
-            <div class="qr-info-sub">Escanéalo para conectar tu WhatsApp. Compártelo con tu equipo para dar acceso.</div>
-            <button class="qr-btn">Ver QR completo</button>
+            <div class="qr-info-t">Tu código QR de acceso</div>
+            <div class="qr-info-s">Escanea con WhatsApp para activar o compartir tu agente.</div>
+            <button class="btn-qr-small" onclick="openModal('register')">Ver QR completo</button>
           </div>
         </div>
       </div>
@@ -445,123 +350,140 @@ footer{background:#fff;border-top:1px solid var(--border);padding:40px 24px}
 </section>
 
 <!-- FEATURES -->
-<section id="features" class="features-bg">
-  <div class="section-inner">
-    <div class="section-label">Capacidades</div>
-    <div class="section-title">Todo lo que tu agente puede hacer</div>
-    <p class="section-sub">Desde notas de voz hasta documentos complejos — tu agente entiende y ejecuta.</p>
-    <div class="features-grid">
+<section id="features" class="sec fade-section" style="background:var(--bg)">
+  <div class="sec-in">
+    <div class="sec-label">Capacidades</div>
+    <div class="sec-title">Lo que tu agente hace por ti</div>
+    <p class="sec-sub">Habla, envía archivos o escribe — tu asistente entiende y ejecuta al instante.</p>
+    <div class="feat-grid">
+
       <div class="feat-card">
-        <div class="feat-icon">🎙️</div>
+        <div class="feat-icon-wrap">
+          <svg viewBox="0 0 26 26" fill="none" stroke="#25D366" stroke-width="1.8"><path d="M13 3a4 4 0 0 1 4 4v5a4 4 0 0 1-8 0V7a4 4 0 0 1 4-4z"/><path d="M5 12a8 8 0 0 0 16 0M13 20v3M9 23h8"/></svg>
+        </div>
         <div class="feat-title">Notas de voz</div>
-        <div class="feat-desc">Habla en lugar de escribir. Tu agente transcribe y entiende tu audio perfectamente en español.</div>
+        <div class="feat-desc">Habla en lugar de escribir. Tu agente transcribe y entiende tus instrucciones en español dominicano.</div>
       </div>
+
       <div class="feat-card">
-        <div class="feat-icon">📄</div>
-        <div class="feat-title">Genera documentos</div>
-        <div class="feat-desc">Planificaciones, reportes, facturas, contratos — generados y enviados al instante en Word o PDF.</div>
+        <div class="feat-icon-wrap">
+          <svg viewBox="0 0 26 26" fill="none" stroke="#25D366" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="8" y1="13" x2="18" y2="13"/><line x1="8" y1="17" x2="14" y2="17"/></svg>
+        </div>
+        <div class="feat-title">Planificaciones automáticas</div>
+        <div class="feat-desc">Genera planes diarios, semanales y mensuales alineados al currículo MINERD en segundos.</div>
       </div>
+
       <div class="feat-card">
-        <div class="feat-icon">📊</div>
-        <div class="feat-title">Análisis de archivos</div>
-        <div class="feat-desc">Envía Excel, PDF o imágenes por WhatsApp y tu agente extrae la información y responde.</div>
+        <div class="feat-icon-wrap">
+          <svg viewBox="0 0 26 26" fill="none" stroke="#25D366" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></svg>
+        </div>
+        <div class="feat-title">Registro de asistencia</div>
+        <div class="feat-desc">Registra asistencias diarias por voz o texto. Reportes automáticos al final de cada semana.</div>
       </div>
+
       <div class="feat-card">
-        <div class="feat-icon">📅</div>
-        <div class="feat-title">Agenda y recordatorios</div>
-        <div class="feat-desc">Gestiona tu calendario, crea eventos y recibe recordatorios automáticos sin esfuerzo.</div>
+        <div class="feat-icon-wrap">
+          <svg viewBox="0 0 26 26" fill="none" stroke="#25D366" stroke-width="1.8"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        </div>
+        <div class="feat-title">Calificaciones</div>
+        <div class="feat-desc">Registra y calcula notas por trimestre con la escala oficial del MINERD. Boletines listos al instante.</div>
       </div>
+
       <div class="feat-card">
-        <div class="feat-icon">📈</div>
-        <div class="feat-title">Reportes automáticos</div>
-        <div class="feat-desc">Recibe reportes semanales de tu actividad directamente en WhatsApp cada lunes.</div>
+        <div class="feat-icon-wrap">
+          <svg viewBox="0 0 26 26" fill="none" stroke="#25D366" stroke-width="1.8"><path d="M3 3h18v4H3zM3 10h18v4H3zM3 17h18v4H3"/></svg>
+        </div>
+        <div class="feat-title">Rúbricas y exámenes</div>
+        <div class="feat-desc">Crea rúbricas de evaluación y exámenes completos para cualquier materia y grado.</div>
       </div>
+
       <div class="feat-card">
-        <div class="feat-icon">🔗</div>
+        <div class="feat-icon-wrap">
+          <svg viewBox="0 0 26 26" fill="none" stroke="#25D366" stroke-width="1.8"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/><line x1="12" y1="11" x2="12" y2="17"/><line x1="9" y1="14" x2="15" y2="14"/></svg>
+        </div>
         <div class="feat-title">Google Drive integrado</div>
-        <div class="feat-desc">Todos tus documentos organizados automáticamente en carpetas en tu Google Drive.</div>
+        <div class="feat-desc">Todos tus documentos organizados automáticamente en carpetas por mes, semana y materia.</div>
       </div>
+
     </div>
   </div>
 </section>
 
-<!-- HOW IT WORKS -->
-<section id="como">
-  <div class="section-inner">
-    <div class="section-label">Proceso</div>
-    <div class="section-title">Activo en 3 pasos</div>
-    <div class="how-steps">
-      <div class="step">
-        <div class="step-num">1</div>
-        <div class="step-title">Elige tu plan</div>
-        <div class="step-desc">Selecciona el plan que mejor se adapta a tu negocio y paga de forma segura con PayPal.</div>
+<!-- HOW -->
+<section id="como" class="sec fade-section" style="background:#fff">
+  <div class="sec-in">
+    <div class="sec-label">Proceso</div>
+    <div class="sec-title">Activo en 3 pasos</div>
+    <div class="how-grid">
+      <div class="step-card">
+        <div class="step-n">1</div>
+        <div class="step-title">Crea tu cuenta</div>
+        <div class="step-desc">Regístrate gratis con tus datos docentes y el nivel educativo que impartes.</div>
       </div>
-      <div class="step">
-        <div class="step-num">2</div>
+      <div class="step-card">
+        <div class="step-n">2</div>
         <div class="step-title">Escanea tu QR</div>
-        <div class="step-desc">Tu QR único aparece en tu panel. Escanéalo con WhatsApp y tu agente queda conectado al instante.</div>
+        <div class="step-desc">Tu QR aparece en el panel. Escanéalo con WhatsApp y tu agente queda activado.</div>
       </div>
-      <div class="step">
-        <div class="step-num">3</div>
-        <div class="step-title">Delega y opera</div>
-        <div class="step-desc">Escribe o habla con tu agente desde WhatsApp. Él ejecuta, genera y organiza todo por ti 24/7.</div>
+      <div class="step-card">
+        <div class="step-n">3</div>
+        <div class="step-title">Delega y enseña</div>
+        <div class="step-desc">Escribe o habla con tu agente. Él genera, organiza y reporta todo por ti 24/7.</div>
       </div>
     </div>
   </div>
 </section>
 
 <!-- PRICING -->
-<section id="planes" style="background:#fff">
-  <div class="section-inner">
-    <div class="section-label">Precios</div>
-    <div class="section-title">Simple y transparente</div>
-    <p class="section-sub">Sin contratos. Sin sorpresas. Cancela cuando quieras.</p>
-    <div class="pricing-grid">
+<section id="planes" class="sec fade-section" style="background:var(--bg)">
+  <div class="sec-in">
+    <div class="sec-label">Planes</div>
+    <div class="sec-title">Empieza gratis, escala cuando quieras</div>
+    <p class="sec-sub">Sin tarjeta de crédito para comenzar. Cancela cuando quieras.</p>
+    <div class="price-grid">
 
       <div class="price-card">
-        <div class="price-plan">Básico</div>
-        <div class="price-amount"><span class="price-currency">RD$</span>500<span class="price-period">/mes</span></div>
-        <div class="price-desc">Para profesionales y emprendedores.</div>
-        <ul class="price-features">
-          <li><span class="check">✓</span>200 créditos mensuales</li>
-          <li><span class="check">✓</span>Agente WhatsApp 24/7</li>
-          <li><span class="check">✓</span>Notas de voz</li>
-          <li><span class="check">✓</span>3 tipos de documentos</li>
-          <li><span class="check">✓</span>Soporte por chat</li>
+        <div class="price-tier">Gratuito</div>
+        <div class="price-amt"><span class="price-cur">RD$</span>0<span class="price-per">/mes</span></div>
+        <div class="price-desc">Perfecto para comenzar y explorar.</div>
+        <ul class="price-list">
+          <li><span class="pcheck">✓</span>50 créditos mensuales</li>
+          <li><span class="pcheck">✓</span>Agente WhatsApp 24/7</li>
+          <li><span class="pcheck">✓</span>Notas de voz</li>
+          <li><span class="pcheck">✓</span>2 tipos de documentos</li>
         </ul>
-        <button class="btn-plan btn-plan-outline" onclick="openModal('register','basico')">Comenzar →</button>
+        <button class="btn-price btn-free" onclick="openModal('register','gratis')">Comenzar gratis →</button>
       </div>
 
-      <div class="price-card popular">
-        <div class="popular-badge">⭐ Más popular</div>
-        <div class="price-plan">Profesional</div>
-        <div class="price-amount"><span class="price-currency">RD$</span>1,200<span class="price-period">/mes</span></div>
-        <div class="price-desc">Para negocios y centros educativos.</div>
-        <ul class="price-features">
-          <li><span class="check">✓</span>500 créditos mensuales</li>
-          <li><span class="check">✓</span>Agente WhatsApp 24/7</li>
-          <li><span class="check">✓</span>Notas de voz + archivos</li>
-          <li><span class="check">✓</span>Todos los documentos</li>
-          <li><span class="check">✓</span>Google Drive integrado</li>
-          <li><span class="check">✓</span>Reportes automáticos</li>
-          <li><span class="check">✓</span>Soporte prioritario</li>
+      <div class="price-card pop">
+        <div class="pop-badge">⭐ Más popular</div>
+        <div class="price-tier">Profesional</div>
+        <div class="price-amt"><span class="price-cur">RD$</span>800<span class="price-per">/mes</span></div>
+        <div class="price-desc">Para docentes activos que quieren más.</div>
+        <ul class="price-list">
+          <li><span class="pcheck">✓</span>500 créditos mensuales</li>
+          <li><span class="pcheck">✓</span>Agente WhatsApp 24/7</li>
+          <li><span class="pcheck">✓</span>Voz + archivos + imágenes</li>
+          <li><span class="pcheck">✓</span>Todos los documentos MINERD</li>
+          <li><span class="pcheck">✓</span>Google Drive integrado</li>
+          <li><span class="pcheck">✓</span>Reportes automáticos</li>
+          <li><span class="pcheck">✓</span>Soporte prioritario</li>
         </ul>
-        <button class="btn-plan btn-plan-primary" onclick="openModal('register','profesional')">Activar ahora →</button>
+        <button class="btn-price btn-price-g" onclick="openModal('register','profesional')">Activar ahora →</button>
       </div>
 
       <div class="price-card">
-        <div class="price-plan">Enterprise</div>
-        <div class="price-amount"><span class="price-currency">RD$</span>3,500<span class="price-period">/mes</span></div>
-        <div class="price-desc">Para empresas con múltiples usuarios.</div>
-        <ul class="price-features">
-          <li><span class="check">✓</span>Créditos ilimitados</li>
-          <li><span class="check">✓</span>Múltiples agentes</li>
-          <li><span class="check">✓</span>Facturación electrónica</li>
-          <li><span class="check">✓</span>API personalizada</li>
-          <li><span class="check">✓</span>Onboarding dedicado</li>
-          <li><span class="check">✓</span>Soporte 24/7</li>
+        <div class="price-tier">Centro Educativo</div>
+        <div class="price-amt"><span class="price-cur">RD$</span>2,500<span class="price-per">/mes</span></div>
+        <div class="price-desc">Para centros con múltiples docentes.</div>
+        <ul class="price-list">
+          <li><span class="pcheck">✓</span>Créditos ilimitados</li>
+          <li><span class="pcheck">✓</span>Hasta 50 agentes docentes</li>
+          <li><span class="pcheck">✓</span>Dashboard administrativo</li>
+          <li><span class="pcheck">✓</span>Reportes distritales MINERD</li>
+          <li><span class="pcheck">✓</span>Onboarding presencial</li>
         </ul>
-        <button class="btn-plan btn-plan-outline" onclick="openModal('register','enterprise')">Contactar →</button>
+        <button class="btn-price btn-price-o" onclick="openModal('register','centro')">Solicitar →</button>
       </div>
 
     </div>
@@ -570,267 +492,419 @@ footer{background:#fff;border-top:1px solid var(--border);padding:40px 24px}
 
 <!-- FOOTER -->
 <footer>
-  <div class="footer-inner">
-    <div class="footer-brand">
-      <div class="footer-brand-icon">🤖</div>
-      <span class="footer-brand-name">Agentia.ia</span>
+  <div class="foot-in">
+    <div class="foot-brand">
+      <img src="https://media.base44.com/images/public/whatsapp/69bf571e53cddb8789552b4e/your_agent/69bf571e53cddb8789552b4f/9d74bec76_whatsapp_image_1705984577289343.jpg" alt="Agentia">
+      <span class="foot-brand-name">Agentia<span>.ia</span></span>
     </div>
-    <div class="footer-links">
-      <a href="#features" class="footer-link">Capacidades</a>
-      <a href="#como" class="footer-link">Cómo funciona</a>
-      <a href="#planes" class="footer-link">Planes</a>
+    <div class="foot-links">
+      <a href="#features" class="foot-link">Capacidades</a>
+      <a href="#como" class="foot-link">Cómo funciona</a>
+      <a href="#planes" class="foot-link">Planes</a>
     </div>
-    <div class="footer-copy">© 2026 Agentia · DGtech 🇩🇴</div>
+    <div class="foot-copy">© 2026 Agentia · DGtech 🇩🇴</div>
   </div>
 </footer>
 
 <!-- MODAL -->
-<div class="modal-overlay" id="modal" onclick="handleOverlayClick(event)">
-  <div class="modal">
-    <div class="modal-header">
-      <span class="modal-title" id="modal-title">Crear cuenta</span>
-      <button class="modal-close" onclick="closeModal()">✕</button>
+<div class="overlay" id="overlay" onclick="handleOvClick(event)">
+  <div class="modal" id="modal">
+    <div class="modal-head">
+      <span class="modal-title" id="modal-ttl">Crear cuenta</span>
+      <button class="modal-x" onclick="closeModal()">✕</button>
     </div>
     <div class="modal-body">
 
-      <!-- AUTH TABS -->
-      <div class="auth-tabs" id="auth-tabs">
-        <button class="auth-tab active" onclick="switchTab('register')">Registrarse</button>
-        <button class="auth-tab" onclick="switchTab('login')">Iniciar sesión</button>
+      <!-- TABS -->
+      <div class="tabs" id="auth-tabs">
+        <button class="tab on" id="tab-reg" onclick="switchTab('register')">Registrarse</button>
+        <button class="tab" id="tab-log" onclick="switchTab('login')">Iniciar sesión</button>
       </div>
 
-      <!-- STEP 0: PERFIL -->
-      <div class="modal-step active" id="modal-step-0">
-        <div class="steps-indicator">
-          <div class="step-dot active" id="dot-0"></div>
-          <div class="step-dot" id="dot-1"></div>
-          <div class="step-dot" id="dot-2"></div>
-          <div class="step-dot" id="dot-3"></div>
-          <span class="step-label">Paso 1 de 4</span>
-        </div>
-        <p style="font-size:15px;font-weight:600;margin-bottom:16px">¿Qué tipo de negocio tienes?</p>
-        <div class="perfil-grid" id="perfil-grid">
-          <button class="perfil-btn" onclick="selectPerfil('Centro Educativo',this)"><span class="perfil-emoji">🏫</span>Centro Educativo</button>
-          <button class="perfil-btn" onclick="selectPerfil('Docente',this)"><span class="perfil-emoji">👨‍🏫</span>Docente</button>
-          <button class="perfil-btn" onclick="selectPerfil('Colmado',this)"><span class="perfil-emoji">🏪</span>Colmado</button>
-          <button class="perfil-btn" onclick="selectPerfil('Clínica',this)"><span class="perfil-emoji">🏥</span>Clínica</button>
-          <button class="perfil-btn" onclick="selectPerfil('Empresa',this)"><span class="perfil-emoji">💼</span>Empresa</button>
-          <button class="perfil-btn" onclick="selectPerfil('Otro',this)"><span class="perfil-emoji">✨</span>Otro</button>
-        </div>
-        <button class="btn-continue" onclick="goStep(1)" style="margin-top:8px">Continuar →</button>
-      </div>
+      <!-- REGISTER STEPS -->
+      <div id="reg-wrap">
 
-      <!-- STEP 1: DATOS -->
-      <div class="modal-step" id="modal-step-1">
-        <div class="steps-indicator">
-          <div class="step-dot done" id="dot-0b"></div>
-          <div class="step-dot active" id="dot-1b"></div>
-          <div class="step-dot" id="dot-2b"></div>
-          <div class="step-dot" id="dot-3b"></div>
-          <span class="step-label">Paso 2 de 4</span>
-        </div>
-        <button class="btn-back" onclick="goStep(0)">← Volver</button>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Nombre</label>
-            <input class="form-input" id="inp-nombre" placeholder="Tu nombre" type="text">
+        <!-- STEP 0: NIVEL -->
+        <div id="s0" class="reg-step">
+          <div class="step-ind">
+            <div class="sdot on" id="d0"></div>
+            <div class="sdot" id="d1"></div>
+            <div class="sdot" id="d2"></div>
+            <div class="sdot" id="d3"></div>
+            <span class="slabel">Paso 1 de 4</span>
           </div>
-          <div class="form-group">
-            <label class="form-label">WhatsApp</label>
-            <input class="form-input" id="inp-wa" placeholder="8091234567" type="tel">
+          <p style="font-size:14px;font-weight:700;margin-bottom:14px;color:var(--on2)">¿En qué nivel educativo impartes?</p>
+          <div class="nivel-grid" id="nivel-grid">
+            <button class="nivel-btn" onclick="selectNivel('Inicial',this)">
+              <span class="nivel-emoji">🌱</span>Inicial
+            </button>
+            <button class="nivel-btn" onclick="selectNivel('Primario',this)">
+              <span class="nivel-emoji">📚</span>Primario
+            </button>
+            <button class="nivel-btn" onclick="selectNivel('Secundario',this)">
+              <span class="nivel-emoji">🎓</span>Secundario
+            </button>
+            <button class="nivel-btn" onclick="selectNivel('Superior',this)">
+              <span class="nivel-emoji">🏛️</span>Superior
+            </button>
+          </div>
+          <button class="btn-continue" onclick="goS(1)">Continuar →</button>
+        </div>
+
+        <!-- STEP 1: DATOS OPERATIVOS -->
+        <div id="s1" class="reg-step" style="display:none">
+          <div class="step-ind">
+            <div class="sdot done"></div>
+            <div class="sdot on"></div>
+            <div class="sdot"></div>
+            <div class="sdot"></div>
+            <span class="slabel">Paso 2 de 4 — Datos académicos</span>
+          </div>
+          <button class="btn-back" onclick="goS(0)">← Volver</button>
+          <div class="frow">
+            <div class="fg">
+              <label class="flabel">Regional educativa</label>
+              <select class="fselect" id="inp-regional">
+                <option value="">Seleccionar...</option>
+                <option>Regional 01 — Santo Domingo</option>
+                <option>Regional 02 — Santiago</option>
+                <option>Regional 03 — La Vega</option>
+                <option>Regional 04 — San Cristóbal</option>
+                <option>Regional 05 — San Pedro de Macorís</option>
+                <option>Regional 06 — La Romana</option>
+                <option>Regional 07 — San Francisco de Macorís</option>
+                <option>Regional 08 — Puerto Plata</option>
+                <option>Regional 09 — Moca</option>
+                <option>Regional 10 — San Juan de la Maguana</option>
+                <option>Regional 11 — Barahona</option>
+                <option>Regional 12 — Higüey</option>
+                <option>Regional 13 — Cotuí</option>
+                <option>Regional 14 — Monte Cristi</option>
+                <option>Regional 15 — Nagua</option>
+                <option>Regional 16 — Bonao</option>
+                <option>Regional 17 — Azua</option>
+                <option>Regional 18 — Pedernales</option>
+              </select>
+            </div>
+            <div class="fg">
+              <label class="flabel">Distrito educativo</label>
+              <input class="finput" id="inp-distrito" placeholder="Ej: Distrito 01-01" type="text">
+            </div>
+          </div>
+          <div class="fg">
+            <label class="flabel">Centro educativo</label>
+            <input class="finput" id="inp-centro" placeholder="Nombre del centro" type="text">
+          </div>
+          <div class="frow">
+            <div class="fg">
+              <label class="flabel">Grado(s) que imparte</label>
+              <input class="finput" id="inp-grado" placeholder="Ej: 3ro A, 4to B" type="text">
+            </div>
+            <div class="fg">
+              <label class="flabel">Jornada</label>
+              <select class="fselect" id="inp-jornada">
+                <option value="">Seleccionar...</option>
+                <option>Matutina</option>
+                <option>Vespertina</option>
+                <option>Extendida</option>
+                <option>Nocturna</option>
+              </select>
+            </div>
+          </div>
+          <div class="fg">
+            <label class="flabel">Asignatura(s) que imparte</label>
+            <input class="finput" id="inp-materias" placeholder="Ej: Matemática, Lengua Española" type="text">
+          </div>
+          <button class="btn-continue" onclick="goS(2)">Continuar →</button>
+        </div>
+
+        <!-- STEP 2: DATOS PERSONALES -->
+        <div id="s2" class="reg-step" style="display:none">
+          <div class="step-ind">
+            <div class="sdot done"></div>
+            <div class="sdot done"></div>
+            <div class="sdot on"></div>
+            <div class="sdot"></div>
+            <span class="slabel">Paso 3 de 4 — Datos personales</span>
+          </div>
+          <button class="btn-back" onclick="goS(1)">← Volver</button>
+          <div class="frow">
+            <div class="fg">
+              <label class="flabel">Nombre completo</label>
+              <input class="finput" id="inp-nombre" placeholder="Tu nombre" type="text">
+            </div>
+            <div class="fg">
+              <label class="flabel">WhatsApp</label>
+              <input class="finput" id="inp-wa" placeholder="8091234567" type="tel">
+            </div>
+          </div>
+          <div class="fg">
+            <label class="flabel">Correo electrónico</label>
+            <input class="finput" id="inp-email" placeholder="correo@ejemplo.com" type="email">
+          </div>
+          <div class="fg">
+            <label class="flabel">Contraseña</label>
+            <input class="finput" id="inp-pass" placeholder="Mínimo 8 caracteres" type="password">
+          </div>
+          <div class="fg">
+            <label class="flabel">Confirmar contraseña</label>
+            <input class="finput" id="inp-pass2" placeholder="Repite tu contraseña" type="password">
+          </div>
+          <button class="btn-continue" onclick="goS(3)">Continuar →</button>
+        </div>
+
+        <!-- STEP 3: PLAN + QR -->
+        <div id="s3" class="reg-step" style="display:none">
+          <div class="step-ind">
+            <div class="sdot done"></div>
+            <div class="sdot done"></div>
+            <div class="sdot done"></div>
+            <div class="sdot on"></div>
+            <span class="slabel">Paso 4 de 4 — ¡Último paso!</span>
+          </div>
+          <button class="btn-back" onclick="goS(2)">← Volver</button>
+          <div id="plan-select-wrap">
+            <p style="font-size:13px;font-weight:700;margin-bottom:12px;color:var(--on2)">Elige tu plan</p>
+            <div class="plan-grid">
+              <button class="plan-opt" id="po-gratis" onclick="selPlan('gratis',this)">
+                <div class="plan-opt-l"><div class="plan-opt-name">Gratis <span class="plan-free-badge">FREE</span></div><div class="plan-opt-credits">50 créditos/mes · Sin tarjeta</div></div>
+                <div class="plan-opt-price">RD$0</div>
+              </button>
+              <button class="plan-opt sel" id="po-profesional" onclick="selPlan('profesional',this)">
+                <div class="plan-opt-l"><div class="plan-opt-name">Profesional ⭐</div><div class="plan-opt-credits">500 créditos/mes</div></div>
+                <div class="plan-opt-price">RD$800</div>
+              </button>
+              <button class="plan-opt" id="po-centro" onclick="selPlan('centro',this)">
+                <div class="plan-opt-l"><div class="plan-opt-name">Centro Educativo</div><div class="plan-opt-credits">Ilimitado · 50 docentes</div></div>
+                <div class="plan-opt-price">RD$2,500</div>
+              </button>
+            </div>
+            <button class="btn-free-main" id="btn-activar" onclick="activarPlan()">
+              Activar mi agente gratis →
+            </button>
+            <button class="btn-paypal" id="btn-paypal-pay" style="display:none" onclick="pagarPaypal()">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797h-2.19c-.524 0-.968.382-1.05.9l-1.12 7.106zm14.146-14.42a3.35 3.35 0 0 0-.607-.541c-.013.076-.026.175-.041.254-.93 4.778-4.005 7.201-9.138 7.201h-2.19a.563.563 0 0 0-.556.479l-1.187 7.527h-.099l-.23 1.487a.351.351 0 0 0 .347.4h3.08c.458 0 .85-.334.922-.784l.038-.196.734-4.653.047-.256a.932.932 0 0 1 .92-.784h.58c3.76 0 6.705-1.528 7.565-5.946.36-1.847.173-3.388-.68-4.488z"/></svg>
+              Pagar RD$<span id="paypal-amt">800</span> con PayPal
+            </button>
+          </div>
+
+          <!-- QR display (after activation) -->
+          <div id="qr-wrap" style="display:none">
+            <div class="qr-display">
+              <div class="qr-frame" id="qr-frame">
+                <span class="spin" id="qr-spin">⟳</span>
+              </div>
+              <div class="qr-title" id="qr-ttl">Generando tu QR...</div>
+              <div class="qr-sub" id="qr-sub">Preparando tu agente personalizado. Un momento...</div>
+              <div class="qr-acts" id="qr-acts" style="display:none">
+                <button class="btn-qr-a btn-qr-s" onclick="downloadQR()">⬇ Descargar</button>
+                <button class="btn-qr-a btn-qr-g" onclick="refreshQR()">↻ Regenerar</button>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="form-group">
-          <label class="form-label">Nombre del negocio / institución</label>
-          <input class="form-input" id="inp-empresa" placeholder="Ej: Farmacia San José" type="text">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Correo electrónico</label>
-          <input class="form-input" id="inp-email" placeholder="correo@ejemplo.com" type="email">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Contraseña</label>
-          <input class="form-input" id="inp-pass" placeholder="Mínimo 8 caracteres" type="password">
-        </div>
-        <button class="btn-continue" onclick="goStep(2)">Continuar →</button>
+
       </div>
 
-      <!-- STEP 2: PLAN -->
-      <div class="modal-step" id="modal-step-2">
-        <div class="steps-indicator">
-          <div class="step-dot done"></div>
-          <div class="step-dot done"></div>
-          <div class="step-dot active"></div>
-          <div class="step-dot"></div>
-          <span class="step-label">Paso 3 de 4</span>
+      <!-- LOGIN FORM -->
+      <div id="login-wrap" style="display:none">
+        <div class="fg">
+          <label class="flabel">Correo electrónico</label>
+          <input class="finput" id="log-email" placeholder="correo@ejemplo.com" type="email">
         </div>
-        <button class="btn-back" onclick="goStep(1)">← Volver</button>
-        <p style="font-size:15px;font-weight:600;margin-bottom:16px">Selecciona tu plan</p>
-        <div class="plan-select-grid">
-          <button class="plan-select-btn" id="plan-basico" onclick="selectPlan('basico',this)">
-            <div><div class="plan-select-name">Básico</div><div class="plan-select-credits">200 créditos/mes</div></div>
-            <div class="plan-select-price">RD$500</div>
-          </button>
-          <button class="plan-select-btn selected" id="plan-profesional" onclick="selectPlan('profesional',this)">
-            <div><div class="plan-select-name">Profesional ⭐</div><div class="plan-select-credits">500 créditos/mes</div></div>
-            <div class="plan-select-price">RD$1,200</div>
-          </button>
-          <button class="plan-select-btn" id="plan-enterprise" onclick="selectPlan('enterprise',this)">
-            <div><div class="plan-select-name">Enterprise</div><div class="plan-select-credits">Créditos ilimitados</div></div>
-            <div class="plan-select-price">RD$3,500</div>
-          </button>
+        <div class="fg">
+          <label class="flabel">Contraseña</label>
+          <input class="finput" id="log-pass" placeholder="Tu contraseña" type="password">
         </div>
-        <button class="btn-paypal" onclick="goStep(3)" style="margin-top:16px">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797h-2.19c-.524 0-.968.382-1.05.9l-1.12 7.106zm14.146-14.42a3.35 3.35 0 0 0-.607-.541c-.013.076-.026.175-.041.254-.93 4.778-4.005 7.201-9.138 7.201h-2.19a.563.563 0 0 0-.556.479l-1.187 7.527h-.099l-.23 1.487a.351.351 0 0 0 .347.4h3.08c.458 0 .85-.334.922-.784l.038-.196.734-4.653.047-.256a.932.932 0 0 1 .92-.784h.58c3.76 0 6.705-1.528 7.565-5.946.36-1.847.173-3.388-.68-4.488z"/></svg>
-          Pagar con PayPal
-        </button>
+        <button class="btn-continue" onclick="doLogin()">Entrar a mi panel →</button>
+        <p style="text-align:center;margin-top:14px;font-size:13px;color:var(--on3)">¿Olvidaste tu contraseña? <a href="#" class="link-green" onclick="showRecovery()">Recuperar acceso</a></p>
       </div>
 
-      <!-- STEP 3: QR -->
-      <div class="modal-step" id="modal-step-3">
-        <div class="steps-indicator">
-          <div class="step-dot done"></div>
-          <div class="step-dot done"></div>
-          <div class="step-dot done"></div>
-          <div class="step-dot active"></div>
-          <span class="step-label">¡Último paso!</span>
+      <!-- RECOVERY FORM -->
+      <div id="recovery-wrap" style="display:none">
+        <div style="text-align:center;margin-bottom:16px">
+          <div style="font-size:32px;margin-bottom:8px">🔑</div>
+          <p style="font-size:14px;font-weight:700;margin-bottom:4px">Recuperar contraseña</p>
+          <p style="font-size:13px;color:var(--on3)">Te enviaremos un enlace a tu correo registrado.</p>
         </div>
-        <div class="qr-display">
-          <div class="qr-big" id="qr-container">
-            <span id="qr-spinner" style="font-size:40px" class="qr-loading">⟳</span>
-          </div>
-          <div class="qr-title" id="qr-status">Generando tu QR...</div>
-          <div class="qr-sub" id="qr-instructions">Espera un momento, estamos preparando tu agente personalizado.</div>
-          <div class="qr-actions" id="qr-actions" style="display:none">
-            <button class="btn-qr btn-qr-secondary" onclick="downloadQR()">⬇ Descargar</button>
-            <button class="btn-qr btn-qr-primary" onclick="refreshQR()">↻ Actualizar</button>
-          </div>
+        <div class="fg">
+          <label class="flabel">Correo electrónico</label>
+          <input class="finput" id="rec-email" placeholder="correo@ejemplo.com" type="email">
         </div>
+        <button class="btn-continue" onclick="doRecovery()">Enviar enlace de recuperación</button>
+        <button class="btn-back" style="justify-content:center;margin-top:8px" onclick="switchTab('login')">← Volver al inicio de sesión</button>
       </div>
 
-      <!-- LOGIN -->
-      <div class="modal-step" id="modal-login" style="display:none">
-        <div class="form-group">
-          <label class="form-label">Correo electrónico</label>
-          <input class="form-input" placeholder="correo@ejemplo.com" type="email">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Contraseña</label>
-          <input class="form-input" placeholder="Tu contraseña" type="password">
-        </div>
-        <button class="btn-continue">Entrar a mi panel →</button>
-        <p style="text-align:center;margin-top:12px;font-size:13px;color:var(--on-surface-3)">¿Olvidaste tu contraseña? <a href="#" style="color:var(--primary)">Recuperar</a></p>
+      <!-- SUCCESS MESSAGE -->
+      <div id="success-wrap" style="display:none;text-align:center;padding:16px 0">
+        <div style="font-size:52px;margin-bottom:12px">✅</div>
+        <div style="font-size:17px;font-weight:800;margin-bottom:8px" id="success-title">¡Listo!</div>
+        <div style="font-size:13px;color:var(--on2);line-height:1.6" id="success-msg">Tu cuenta fue creada exitosamente.</div>
       </div>
 
     </div>
   </div>
 </div>
 
-<!-- PWA INSTALL BANNER -->
-<div class="pwa-banner" id="pwa-banner">
-  <div class="pwa-icon">🤖</div>
-  <div class="pwa-text">
-    <div class="pwa-title">Instalar Agentia</div>
-    <div class="pwa-sub">Accede más rápido desde tu pantalla de inicio</div>
+<!-- PWA BANNER -->
+<div class="pwa-bar" id="pwa-bar">
+  <div class="pwa-icon-box">
+    <img src="https://media.base44.com/images/public/whatsapp/69bf571e53cddb8789552b4e/your_agent/69bf571e53cddb8789552b4f/9d74bec76_whatsapp_image_1705984577289343.jpg" alt="">
   </div>
-  <button class="btn-install" id="pwa-install-btn">Instalar</button>
-  <button class="pwa-dismiss" onclick="dismissPWA()">✕</button>
+  <div class="pwa-t">
+    <div class="pwa-t-title">Instalar Agentia</div>
+    <div class="pwa-t-sub">Accede más rápido desde tu pantalla de inicio</div>
+  </div>
+  <button class="btn-pwa" id="pwa-btn">Instalar</button>
+  <button class="pwa-x" onclick="document.getElementById('pwa-bar').classList.remove('show')">✕</button>
 </div>
 
 <script>
-// ---- STATE ----
-let currentStep = 0;
-let selectedPerfil = '';
-let selectedPlan = 'profesional';
-let isLoginMode = false;
-let deferredPrompt = null;
+// ---- ESTADO GLOBAL ----
+const state = {nivel:'', plan:'gratis', users: JSON.parse(localStorage.getItem('agentia_users')||'{}'), currentUser: localStorage.getItem('agentia_user')||null};
+const PAYPAL_PRICES = {gratis:0, profesional:800, centro:2500};
 
 // ---- MODAL ----
 function openModal(mode, plan) {
-  document.getElementById('modal').classList.add('active');
-  document.body.style.overflow = 'hidden';
-  if(plan) selectPlanById(plan);
-  if(mode === 'login') switchTab('login');
-  else switchTab('register');
+  document.getElementById('overlay').classList.add('open');
+  document.body.style.overflow='hidden';
+  if(plan) { state.plan=plan; updatePlanUI(); }
+  switchTab(mode==='login'?'login':'register');
 }
 function closeModal() {
-  document.getElementById('modal').classList.remove('active');
-  document.body.style.overflow = '';
+  document.getElementById('overlay').classList.remove('open');
+  document.body.style.overflow='';
 }
-function handleOverlayClick(e) {
-  if(e.target === document.getElementById('modal')) closeModal();
-}
-function switchTab(tab) {
-  isLoginMode = (tab === 'login');
-  document.querySelectorAll('.auth-tab').forEach((t,i) => {
-    t.classList.toggle('active', (i===0 && tab==='register') || (i===1 && tab==='login'));
-  });
-  document.getElementById('modal-title').textContent = tab === 'login' ? 'Iniciar sesión' : 'Crear cuenta';
-  const loginEl = document.getElementById('modal-login');
-  const steps = document.querySelectorAll('.modal-step:not(#modal-login)');
-  if(tab === 'login') {
-    steps.forEach(s => s.style.display = 'none');
-    loginEl.style.display = 'block';
-  } else {
-    steps.forEach(s => s.style.display = '');
-    loginEl.style.display = 'none';
-    goStep(0);
-  }
+function handleOvClick(e) { if(e.target===document.getElementById('overlay')) closeModal(); }
+function switchTab(t) {
+  const isLog = t==='login';
+  document.getElementById('tab-reg').classList.toggle('on',!isLog);
+  document.getElementById('tab-log').classList.toggle('on',isLog);
+  document.getElementById('reg-wrap').style.display = isLog?'none':'block';
+  document.getElementById('login-wrap').style.display = isLog?'block':'none';
+  document.getElementById('recovery-wrap').style.display='none';
+  document.getElementById('success-wrap').style.display='none';
+  document.getElementById('modal-ttl').textContent = isLog?'Iniciar sesión':'Crear cuenta';
+  if(!isLog) goS(0);
 }
 
 // ---- STEPS ----
-function goStep(n) {
-  document.querySelectorAll('.modal-step').forEach(s => {
-    if(s.id !== 'modal-login') s.classList.remove('active');
-  });
-  const target = document.getElementById(`modal-step-${n}`);
-  if(target) { target.classList.add('active'); currentStep = n; }
-  if(n === 3) startQRGeneration();
+function goS(n) {
+  document.querySelectorAll('.reg-step').forEach(s=>s.style.display='none');
+  const el = document.getElementById(`s${n}`);
+  if(el) { el.style.display='block'; el.style.opacity='0'; el.style.transform='translateX(16px)'; setTimeout(()=>{ el.style.transition='all .3s ease'; el.style.opacity='1'; el.style.transform='translateX(0)'; },10); }
 }
 
-// ---- PERFIL ----
-function selectPerfil(p, el) {
-  selectedPerfil = p;
-  document.querySelectorAll('.perfil-btn').forEach(b => b.classList.remove('selected'));
-  el.classList.add('selected');
+// ---- NIVEL ----
+function selectNivel(n, el) {
+  state.nivel = n;
+  document.querySelectorAll('.nivel-btn').forEach(b=>b.classList.remove('sel'));
+  el.classList.add('sel');
 }
 
 // ---- PLAN ----
-function selectPlan(p, el) {
-  selectedPlan = p;
-  document.querySelectorAll('.plan-select-btn').forEach(b => b.classList.remove('selected'));
-  el.classList.add('selected');
+function selPlan(p, el) {
+  state.plan = p;
+  document.querySelectorAll('.plan-opt').forEach(b=>b.classList.remove('sel'));
+  el.classList.add('sel');
+  updatePlanUI();
 }
-function selectPlanById(p) {
-  selectedPlan = p;
-  document.querySelectorAll('.plan-select-btn').forEach(b => b.classList.remove('selected'));
-  const el = document.getElementById(`plan-${p}`);
-  if(el) el.classList.add('selected');
-}
-
-// ---- QR GENERATION ----
-function startQRGeneration() {
-  const container = document.getElementById('qr-container');
-  const status = document.getElementById('qr-status');
-  const instructions = document.getElementById('qr-instructions');
-  const actions = document.getElementById('qr-actions');
-  const spinner = document.getElementById('qr-spinner');
-
-  spinner.style.display = 'block';
-  actions.style.display = 'none';
-  status.textContent = 'Generando tu QR...';
-  instructions.textContent = 'Preparando tu agente personalizado para ' + (selectedPerfil || 'tu negocio') + '.';
-
-  setTimeout(() => {
-    spinner.style.display = 'none';
-    // Render QR usando API de QR pública
-    container.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=agentia-${Date.now()}&color=1a73e8&bgcolor=ffffff&qzone=1" style="width:160px;height:160px;border-radius:8px" alt="QR Code" id="qr-img">`;
-    status.textContent = '✅ ¡Tu QR está listo!';
-    instructions.textContent = 'Abre WhatsApp → Dispositivos vinculados → Vincular dispositivo → Escanea este código.';
-    actions.style.display = 'flex';
-  }, 2500);
+function updatePlanUI() {
+  const isFree = state.plan==='gratis';
+  const btnA = document.getElementById('btn-activar');
+  const btnP = document.getElementById('btn-paypal-pay');
+  const amt = document.getElementById('paypal-amt');
+  if(btnA) btnA.style.display = isFree?'block':'none';
+  if(btnP) btnP.style.display = isFree?'none':'flex';
+  if(amt) amt.textContent = PAYPAL_PRICES[state.plan]||0;
+  document.querySelectorAll('.plan-opt').forEach(b=>b.classList.remove('sel'));
+  const target = document.getElementById(`po-${state.plan}`);
+  if(target) target.classList.add('sel');
 }
 
+// ---- VALIDATION ----
+function validateStep2() {
+  const r = document.getElementById('inp-regional').value;
+  const c = document.getElementById('inp-centro').value;
+  if(!r||!c) { alert('Por favor completa Regional y Centro educativo.'); return false; }
+  return true;
+}
+function validateStep3() {
+  const n = document.getElementById('inp-nombre').value;
+  const e = document.getElementById('inp-email').value;
+  const p = document.getElementById('inp-pass').value;
+  const p2 = document.getElementById('inp-pass2').value;
+  const wa = document.getElementById('inp-wa').value;
+  if(!n||!e||!p||!wa) { alert('Por favor completa todos los campos.'); return false; }
+  if(p!==p2) { alert('Las contraseñas no coinciden.'); return false; }
+  if(p.length<8) { alert('La contraseña debe tener al menos 8 caracteres.'); return false; }
+  const emailReg = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if(!emailReg.test(e)) { alert('Por favor ingresa un correo válido.'); return false; }
+  if(state.users[e]) { alert('Este correo ya está registrado. Inicia sesión.'); switchTab('login'); return false; }
+  return true;
+}
+
+// ---- ACTIVAR PLAN ----
+function activarPlan() {
+  if(!validateStep3()) return;
+  const email = document.getElementById('inp-email').value;
+  const userData = {
+    nombre: document.getElementById('inp-nombre').value,
+    email: email,
+    pass: btoa(document.getElementById('inp-pass').value),
+    wa: document.getElementById('inp-wa').value,
+    nivel: state.nivel,
+    regional: document.getElementById('inp-regional').value,
+    distrito: document.getElementById('inp-distrito').value,
+    centro: document.getElementById('inp-centro').value,
+    grado: document.getElementById('inp-grado').value,
+    jornada: document.getElementById('inp-jornada').value,
+    materias: document.getElementById('inp-materias').value,
+    plan: state.plan,
+    creditos: 50,
+    creado: new Date().toISOString()
+  };
+  state.users[email] = userData;
+  localStorage.setItem('agentia_users', JSON.stringify(state.users));
+  localStorage.setItem('agentia_user', email);
+  state.currentUser = email;
+  showQR();
+}
+
+function pagarPaypal() {
+  if(!validateStep3()) return;
+  const email = document.getElementById('inp-email').value;
+  const wa = document.getElementById('inp-wa').value;
+  const nombre = document.getElementById('inp-nombre').value;
+  const plan = state.plan;
+  const precio = PAYPAL_PRICES[plan];
+  let msg = `Pago Agentia IA\nPlan: ${plan}\nMonto: RD$${precio}\nNombre: ${nombre}\nWhatsApp: ${wa}\nEmail: ${email}`;
+  window.open(`https://wa.me/18296469885?text=${encodeURIComponent(msg)}`, '_blank');
+  activarPlan();
+}
+
+// ---- QR ----
+function showQR() {
+  document.getElementById('plan-select-wrap').style.display='none';
+  document.getElementById('qr-wrap').style.display='block';
+  const spin = document.getElementById('qr-spin');
+  const frame = document.getElementById('qr-frame');
+  const ttl = document.getElementById('qr-ttl');
+  const sub = document.getElementById('qr-sub');
+  const acts = document.getElementById('qr-acts');
+  spin.style.display='block'; acts.style.display='none';
+  ttl.textContent='Generando tu agente...';
+  sub.textContent='Configurando tu asistente personalizado para '+state.nivel+'.';
+  setTimeout(()=>{
+    spin.style.display='none';
+    const uid = Date.now();
+    const qrData = encodeURIComponent(`agentia-${state.currentUser}-${uid}`);
+    frame.innerHTML=`<img src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${qrData}&color=128C7E&bgcolor=ffffff&qzone=2" id="qr-img" style="width:152px;height:152px;border-radius:8px" alt="QR">`;
+    ttl.textContent='✅ ¡Tu agente está listo!';
+    sub.textContent='Abre WhatsApp → Dispositivos vinculados → Vincular → Escanea este QR.';
+    acts.style.display='flex';
+  }, 2800);
+}
 function downloadQR() {
   const img = document.getElementById('qr-img');
   if(!img) return;
@@ -839,37 +913,60 @@ function downloadQR() {
   a.download = 'agentia-qr.png';
   a.click();
 }
+function refreshQR() { showQR(); }
 
-function refreshQR() {
-  startQRGeneration();
+// ---- LOGIN ----
+function doLogin() {
+  const e = document.getElementById('log-email').value;
+  const p = document.getElementById('log-pass').value;
+  if(!e||!p) { alert('Completa todos los campos.'); return; }
+  const u = state.users[e];
+  if(!u) { alert('Correo no registrado. ¿Quieres crear una cuenta?'); switchTab('register'); return; }
+  if(atob(u.pass)!==p) { alert('Contraseña incorrecta. Intenta de nuevo.'); return; }
+  localStorage.setItem('agentia_user',e);
+  state.currentUser=e;
+  document.getElementById('login-wrap').style.display='none';
+  document.getElementById('success-wrap').style.display='block';
+  document.getElementById('success-title').textContent=`¡Bienvenido/a, ${u.nombre.split(' ')[0]}!`;
+  document.getElementById('success-msg').textContent=`Sesión iniciada correctamente. Tu agente ${u.nivel} está activo 24/7 en tu WhatsApp.`;
 }
+
+// ---- RECOVERY ----
+function showRecovery() {
+  document.getElementById('login-wrap').style.display='none';
+  document.getElementById('recovery-wrap').style.display='block';
+}
+function doRecovery() {
+  const e = document.getElementById('rec-email').value;
+  if(!e) { alert('Ingresa tu correo electrónico.'); return; }
+  const u = state.users[e];
+  document.getElementById('recovery-wrap').style.display='none';
+  document.getElementById('success-wrap').style.display='block';
+  document.getElementById('success-title').textContent='¡Correo enviado!';
+  document.getElementById('success-msg').textContent = u
+    ? `Enviamos un enlace de recuperación a ${e}. Revisa tu bandeja de entrada y spam.`
+    : `Si el correo ${e} está registrado, recibirás el enlace en los próximos minutos.`;
+}
+
+// ---- FADE SECTIONS ----
+const obs = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('visible'); });
+},{threshold:0.1});
+document.querySelectorAll('.fade-section').forEach(s=>obs.observe(s));
 
 // ---- PWA ----
-window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
-  setTimeout(() => {
-    document.getElementById('pwa-banner').classList.add('show');
-  }, 3000);
+let dPrompt=null;
+window.addEventListener('beforeinstallprompt',e=>{
+  e.preventDefault(); dPrompt=e;
+  setTimeout(()=>document.getElementById('pwa-bar').classList.add('show'),4000);
 });
-
-document.getElementById('pwa-install-btn').addEventListener('click', async () => {
-  if(deferredPrompt) {
-    deferredPrompt.prompt();
-    const result = await deferredPrompt.userChoice;
-    deferredPrompt = null;
-    document.getElementById('pwa-banner').classList.remove('show');
-  }
+document.getElementById('pwa-btn').addEventListener('click',async()=>{
+  if(dPrompt){await dPrompt.prompt();dPrompt=null;document.getElementById('pwa-bar').classList.remove('show');}
 });
+if('serviceWorker' in navigator) navigator.serviceWorker.register('/agentia/sw.js').catch(()=>{});
 
-function dismissPWA() {
-  document.getElementById('pwa-banner').classList.remove('show');
-}
-
-// Service Worker
-if('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/agentia/sw.js').catch(() => {});
-}
+// Init
+updatePlanUI();
 </script>
 </body>
 </html>
