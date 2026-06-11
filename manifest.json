@@ -1,0 +1,17 @@
+{
+  "name": "Agentia — Tu Agente IA",
+  "short_name": "Agentia",
+  "description": "Automatiza tu negocio desde WhatsApp con IA",
+  "start_url": "/agentia/",
+  "scope": "/agentia/",
+  "display": "standalone",
+  "orientation": "any",
+  "theme_color": "#1a73e8",
+  "background_color": "#ffffff",
+  "icons": [
+    {"src": "https://via.placeholder.com/192/1a73e8/ffffff?text=A", "sizes": "192x192", "type": "image/png"},
+    {"src": "https://via.placeholder.com/512/1a73e8/ffffff?text=A", "sizes": "512x512", "type": "image/png", "purpose": "any maskable"}
+  ],
+  "categories": ["business", "productivity"],
+  "lang": "es"
+}
