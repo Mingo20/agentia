@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#1a73e8">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Agentia">
+<meta name="description" content="Automatiza tu negocio desde WhatsApp con IA">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<title>Agentia — Tu Agente IA por WhatsApp</title>
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-font-smoothing:antialiased}
+:root{
+  --primary:#1a73e8;
+  --primary-dark:#1557b0;
+  --primary-light:#e8f0fe;
+  --green:#34a853;
+  --green-light:#e6f4ea;
+  --surface:#ffffff;
+  --bg:#f8f9fa;
+  --on-surface:#202124;
+  --on-surface-2:#5f6368;
+  --on-surface-3:#80868b;
+  --border:#dadce0;
+  --shadow-sm:0 1px 3px rgba(0,0,0,0.1),0 1px 2px rgba(0,0,0,0.06);
+  --shadow-md:0 4px 16px rgba(0,0,0,0.08);
+  --shadow-lg:0 8px 32px rgba(0,0,0,0.12);
+  --radius-sm:8px;
+  --radius-md:12px;
+  --radius-lg:20px;
+  --radius-xl:28px;
+}
+html{scroll-behavior:smooth;font-size:16px}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--on-surface);min-height:100vh;overflow-x:hidden}
+
+/* ---- NAVBAR ---- */
+.navbar{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  background:rgba(255,255,255,0.95);backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  padding:0 24px;height:64px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.nav-logo-icon{width:36px;height:36px;background:var(--primary);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px}
+.nav-logo-text{font-size:18px;font-weight:700;color:var(--on-surface);letter-spacing:-0.3px}
+.nav-logo-text span{color:var(--primary)}
+.nav-actions{display:flex;align-items:center;gap:8px}
+.btn-ghost{background:none;border:none;padding:8px 16px;border-radius:20px;font-size:14px;font-weight:500;color:var(--on-surface-2);cursor:pointer;transition:all .2s}
+.btn-ghost:hover{background:var(--bg);color:var(--on-surface)}
+.btn-primary{background:var(--primary);color:#fff;border:none;padding:8px 20px;border-radius:20px;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;text-decoration:none;display:inline-flex;align-items:center}
+.btn-primary:hover{background:var(--primary-dark);box-shadow:0 2px 8px rgba(26,115,232,0.4)}
+
+/* ---- HERO ---- */
+.hero{
+  min-height:100vh;padding:88px 24px 60px;
+  display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(180deg,#fff 0%,var(--bg) 100%);
+}
+.hero-inner{max-width:900px;width:100%;text-align:center}
+.hero-chip{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--green-light);color:var(--green);
+  padding:6px 16px;border-radius:20px;font-size:13px;font-weight:600;
+  margin-bottom:28px;
+}
+.hero-chip-dot{width:8px;height:8px;background:var(--green);border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(1.2)}}
+.hero-title{
+  font-size:clamp(36px,6vw,64px);font-weight:800;
+  color:var(--on-surface);line-height:1.1;letter-spacing:-1.5px;
+  margin-bottom:20px;
+}
+.hero-title span{color:var(--primary)}
+.hero-sub{
+  font-size:clamp(16px,2.5vw,20px);color:var(--on-surface-2);
+  line-height:1.6;max-width:580px;margin:0 auto 40px;font-weight:400;
+}
+.hero-cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:56px}
+.btn-hero{
+  padding:14px 32px;border-radius:50px;font-size:16px;font-weight:600;
+  cursor:pointer;transition:all .25s;border:none;text-decoration:none;display:inline-flex;align-items:center;gap:8px;
+}
+.btn-hero-primary{background:var(--primary);color:#fff}
+.btn-hero-primary:hover{background:var(--primary-dark);transform:translateY(-2px);box-shadow:0 6px 24px rgba(26,115,232,0.35)}
+.btn-hero-outline{background:#fff;color:var(--on-surface);border:1.5px solid var(--border)}
+.btn-hero-outline:hover{border-color:var(--primary);color:var(--primary);transform:translateY(-2px)}
+
+/* Stats */
+.hero-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:480px;margin:0 auto}
+.stat{background:#fff;border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px 16px;text-align:center}
+.stat-num{font-size:28px;font-weight:800;color:var(--primary);letter-spacing:-1px}
+.stat-label{font-size:12px;color:var(--on-surface-3);margin-top:4px;font-weight:500}
+
+/* ---- SECTIONS ---- */
+section{padding:80px 24px}
+.section-inner{max-width:960px;margin:0 auto}
+.section-label{font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--primary);margin-bottom:12px}
+.section-title{font-size:clamp(28px,4vw,40px);font-weight:800;color:var(--on-surface);line-height:1.2;letter-spacing:-0.5px;margin-bottom:16px}
+.section-sub{font-size:16px;color:var(--on-surface-2);line-height:1.6;max-width:560px}
+
+/* ---- FEATURES ---- */
+.features-bg{background:#fff}
+.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:48px}
+.feat-card{
+  background:var(--bg);border:1px solid var(--border);
+  border-radius:var(--radius-lg);padding:28px 24px;
+  transition:all .25s;cursor:default;
+}
+.feat-card:hover{border-color:var(--primary);background:#fff;transform:translateY(-3px);box-shadow:var(--shadow-md)}
+.feat-icon{width:48px;height:48px;border-radius:14px;background:var(--primary-light);display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:16px}
+.feat-title{font-size:16px;font-weight:700;color:var(--on-surface);margin-bottom:8px}
+.feat-desc{font-size:14px;color:var(--on-surface-2);line-height:1.6}
+
+/* ---- HOW ---- */
+.how-steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:24px;margin-top:48px;position:relative}
+.step{text-align:center;padding:32px 20px}
+.step-num{
+  width:52px;height:52px;border-radius:50%;
+  background:var(--primary);color:#fff;
+  font-size:20px;font-weight:800;
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 20px;box-shadow:0 4px 16px rgba(26,115,232,0.3);
+}
+.step-title{font-size:16px;font-weight:700;margin-bottom:8px}
+.step-desc{font-size:14px;color:var(--on-surface-2);line-height:1.6}
+
+/* ---- PRICING ---- */
+.pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:48px;align-items:start}
+.price-card{background:#fff;border:1.5px solid var(--border);border-radius:var(--radius-xl);padding:32px 28px;transition:all .25s;position:relative}
+.price-card:hover{border-color:var(--primary);box-shadow:var(--shadow-lg)}
+.price-card.popular{border-color:var(--primary);box-shadow:0 0 0 4px rgba(26,115,232,0.08)}
+.popular-badge{
+  position:absolute;top:-14px;left:50%;transform:translateX(-50%);
+  background:var(--primary);color:#fff;
+  font-size:12px;font-weight:700;padding:4px 16px;border-radius:20px;
+  white-space:nowrap;
+}
+.price-plan{font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--on-surface-3);margin-bottom:12px}
+.price-amount{font-size:42px;font-weight:800;color:var(--on-surface);letter-spacing:-1.5px;line-height:1}
+.price-currency{font-size:18px;font-weight:600;vertical-align:top;margin-top:8px;display:inline-block}
+.price-period{font-size:14px;color:var(--on-surface-3);margin-left:4px}
+.price-desc{font-size:14px;color:var(--on-surface-2);margin:12px 0 24px;line-height:1.5}
+.price-features{list-style:none;margin-bottom:28px}
+.price-features li{font-size:14px;color:var(--on-surface-2);padding:8px 0;border-bottom:1px solid var(--bg);display:flex;align-items:center;gap:10px}
+.price-features li:last-child{border-bottom:none}
+.check{color:var(--green);font-size:16px;font-weight:700;flex-shrink:0}
+.btn-plan{width:100%;padding:13px;border-radius:50px;font-size:15px;font-weight:600;cursor:pointer;transition:all .2s;border:none}
+.btn-plan-primary{background:var(--primary);color:#fff}
+.btn-plan-primary:hover{background:var(--primary-dark);box-shadow:0 4px 16px rgba(26,115,232,0.3)}
+.btn-plan-outline{background:#fff;color:var(--primary);border:1.5px solid var(--primary)}
+.btn-plan-outline:hover{background:var(--primary-light)}
+
+/* ---- DASHBOARD PREVIEW ---- */
+.dash-preview{
+  background:#fff;border:1px solid var(--border);
+  border-radius:var(--radius-xl);overflow:hidden;
+  box-shadow:var(--shadow-lg);margin-top:48px;
+}
+.dash-header{
+  background:var(--primary);padding:16px 24px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.dash-header-left{display:flex;align-items:center;gap:12px}
+.dash-avatar{width:36px;height:36px;background:rgba(255,255,255,0.2);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px}
+.dash-company{font-size:15px;font-weight:600;color:#fff}
+.dash-role{font-size:12px;color:rgba(255,255,255,0.7)}
+.dash-status{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.15);padding:6px 12px;border-radius:20px}
+.dash-status-dot{width:8px;height:8px;background:#34a853;border-radius:50%;animation:pulse 2s infinite}
+.dash-status-text{font-size:12px;color:#fff;font-weight:500}
+.dash-body{padding:24px}
+.dash-kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:20px}
+.kpi{background:var(--bg);border-radius:var(--radius-md);padding:16px}
+.kpi-num{font-size:26px;font-weight:800;color:var(--on-surface);letter-spacing:-0.5px}
+.kpi-label{font-size:12px;color:var(--on-surface-3);margin-top:2px;font-weight:500}
+.kpi-trend{font-size:11px;color:var(--green);font-weight:600;margin-top:4px}
+.dash-chart-label{font-size:13px;font-weight:600;color:var(--on-surface-2);margin-bottom:12px}
+.dash-bars{display:flex;align-items:flex-end;gap:6px;height:60px;margin-bottom:20px}
+.bar{flex:1;border-radius:4px 4px 0 0;background:var(--primary-light);transition:all .3s;min-height:8px}
+.bar.active{background:var(--primary)}
+.dash-qr-section{background:var(--bg);border-radius:var(--radius-md);padding:16px;display:flex;align-items:center;gap:16px}
+.qr-mock{width:64px;height:64px;background:#fff;border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:32px;flex-shrink:0}
+.qr-info-title{font-size:14px;font-weight:600;margin-bottom:4px}
+.qr-info-sub{font-size:12px;color:var(--on-surface-3);line-height:1.4}
+.qr-btn{margin-top:8px;background:var(--primary);color:#fff;border:none;padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer}
+
+/* ---- REGISTRO MODAL ---- */
+.modal-overlay{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);
+  backdrop-filter:blur(8px);z-index:200;
+  align-items:center;justify-content:center;padding:16px;
+}
+.modal-overlay.active{display:flex}
+.modal{
+  background:#fff;border-radius:var(--radius-xl);
+  width:100%;max-width:440px;overflow:hidden;
+  box-shadow:var(--shadow-lg);animation:slideUp .3s ease;
+}
+@keyframes slideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+.modal-header{padding:24px 24px 0;display:flex;justify-content:space-between;align-items:center}
+.modal-title{font-size:20px;font-weight:700}
+.modal-close{width:32px;height:32px;border-radius:50%;background:var(--bg);border:none;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;color:var(--on-surface-2)}
+.modal-body{padding:24px}
+.modal-step{display:none}
+.modal-step.active{display:block}
+
+/* Steps indicator */
+.steps-indicator{display:flex;align-items:center;gap:8px;margin-bottom:24px}
+.step-dot{width:8px;height:8px;border-radius:50%;background:var(--border);transition:all .3s}
+.step-dot.active{background:var(--primary);width:24px;border-radius:4px}
+.step-dot.done{background:var(--green)}
+.step-label{font-size:13px;color:var(--on-surface-3);margin-left:4px}
+
+/* Form */
+.form-group{margin-bottom:16px}
+.form-label{font-size:13px;font-weight:600;color:var(--on-surface);margin-bottom:6px;display:block}
+.form-input{
+  width:100%;padding:12px 16px;
+  border:1.5px solid var(--border);border-radius:var(--radius-md);
+  font-size:15px;font-family:inherit;color:var(--on-surface);
+  outline:none;transition:border-color .2s;background:#fff;
+}
+.form-input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(26,115,232,0.1)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.perfil-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:8px}
+.perfil-btn{
+  padding:14px 10px;border:1.5px solid var(--border);border-radius:var(--radius-md);
+  background:#fff;cursor:pointer;text-align:center;transition:all .2s;font-size:13px;font-weight:500;
+}
+.perfil-btn:hover,.perfil-btn.selected{border-color:var(--primary);background:var(--primary-light);color:var(--primary)}
+.perfil-emoji{font-size:24px;display:block;margin-bottom:4px}
+
+/* Plan selector */
+.plan-select-grid{display:grid;gap:10px;margin-bottom:8px}
+.plan-select-btn{
+  padding:16px;border:1.5px solid var(--border);border-radius:var(--radius-md);
+  background:#fff;cursor:pointer;text-align:left;transition:all .2s;display:flex;justify-content:space-between;align-items:center;
+}
+.plan-select-btn:hover,.plan-select-btn.selected{border-color:var(--primary);background:var(--primary-light)}
+.plan-select-name{font-size:15px;font-weight:600;color:var(--on-surface)}
+.plan-select-price{font-size:15px;font-weight:700;color:var(--primary)}
+.plan-select-credits{font-size:12px;color:var(--on-surface-3);margin-top:2px}
+
+/* QR Display */
+.qr-display{text-align:center;padding:8px 0}
+.qr-big{
+  width:180px;height:180px;margin:0 auto 16px;
+  background:#fff;border:2px solid var(--border);border-radius:var(--radius-md);
+  display:flex;align-items:center;justify-content:center;
+  font-size:100px;position:relative;
+}
+.qr-loading{animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.qr-title{font-size:18px;font-weight:700;margin-bottom:8px}
+.qr-sub{font-size:14px;color:var(--on-surface-2);line-height:1.5;margin-bottom:16px}
+.qr-actions{display:flex;gap:10px;justify-content:center}
+.btn-qr{padding:10px 20px;border-radius:50px;font-size:14px;font-weight:600;cursor:pointer;border:none;transition:all .2s}
+.btn-qr-primary{background:var(--primary);color:#fff}
+.btn-qr-secondary{background:var(--bg);color:var(--on-surface);border:1.5px solid var(--border)}
+
+/* PayPal button */
+.btn-paypal{
+  width:100%;padding:14px;border-radius:50px;
+  background:linear-gradient(135deg,#0070ba,#003087);
+  color:#fff;font-size:15px;font-weight:700;
+  cursor:pointer;border:none;transition:all .25s;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+}
+.btn-paypal:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,112,186,0.35)}
+.btn-continue{width:100%;padding:13px;border-radius:50px;background:var(--primary);color:#fff;font-size:15px;font-weight:600;cursor:pointer;border:none;transition:all .2s;margin-top:4px}
+.btn-continue:hover{background:var(--primary-dark)}
+.btn-back{background:none;border:none;color:var(--on-surface-3);font-size:14px;cursor:pointer;padding:8px 0;display:flex;align-items:center;gap:4px;margin-bottom:8px}
+
+/* Auth tabs */
+.auth-tabs{display:flex;background:var(--bg);border-radius:var(--radius-md);padding:4px;margin-bottom:20px}
+.auth-tab{flex:1;padding:8px;text-align:center;border-radius:var(--radius-sm);font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;border:none;background:none;color:var(--on-surface-3)}
+.auth-tab.active{background:#fff;color:var(--primary);box-shadow:var(--shadow-sm)}
+
+/* ---- FOOTER ---- */
+footer{background:#fff;border-top:1px solid var(--border);padding:40px 24px}
+.footer-inner{max-width:960px;margin:0 auto;display:flex;flex-wrap:wrap;gap:32px;justify-content:space-between;align-items:center}
+.footer-brand{display:flex;align-items:center;gap:10px}
+.footer-brand-icon{width:32px;height:32px;background:var(--primary);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px}
+.footer-brand-name{font-size:16px;font-weight:700}
+.footer-links{display:flex;gap:24px;flex-wrap:wrap}
+.footer-link{font-size:14px;color:var(--on-surface-2);text-decoration:none}
+.footer-link:hover{color:var(--primary)}
+.footer-copy{font-size:13px;color:var(--on-surface-3)}
+
+/* ---- PWA INSTALL BANNER ---- */
+.pwa-banner{
+  display:none;position:fixed;bottom:16px;left:16px;right:16px;
+  background:#fff;border:1px solid var(--border);border-radius:var(--radius-xl);
+  padding:16px 20px;z-index:150;box-shadow:var(--shadow-lg);
+  align-items:center;gap:16px;max-width:480px;margin:0 auto;
+}
+.pwa-banner.show{display:flex}
+.pwa-icon{width:44px;height:44px;background:var(--primary);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.pwa-text{flex:1}
+.pwa-title{font-size:14px;font-weight:700;margin-bottom:2px}
+.pwa-sub{font-size:12px;color:var(--on-surface-3)}
+.btn-install{background:var(--primary);color:#fff;border:none;padding:8px 16px;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;flex-shrink:0}
+.pwa-dismiss{background:none;border:none;color:var(--on-surface-3);cursor:pointer;font-size:18px;padding:4px;flex-shrink:0}
+
+/* ---- RESPONSIVE ---- */
+@media(max-width:600px){
+  .navbar{padding:0 16px}
+  .nav-actions .btn-ghost{display:none}
+  section{padding:60px 16px}
+  .hero{padding:80px 16px 48px}
+  .hero-stats{grid-template-columns:repeat(3,1fr)}
+  .dash-kpis{grid-template-columns:repeat(2,1fr)}
+  .form-row{grid-template-columns:1fr}
+  .footer-inner{flex-direction:column;align-items:flex-start;gap:20px}
+  .footer-links{gap:16px}
+}
+@media(min-width:768px){
+  .perfil-grid{grid-template-columns:repeat(3,1fr)}
+  .dash-kpis{grid-template-columns:repeat(4,1fr)}
+}
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <a class="nav-logo" href="#">
+    <div class="nav-logo-icon">🤖</div>
+    <span class="nav-logo-text">Agentia<span>.ia</span></span>
+  </a>
+  <div class="nav-actions">
+    <button class="btn-ghost" onclick="openModal('login')">Iniciar sesión</button>
+    <button class="btn-primary" onclick="openModal('register')">Comenzar gratis</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-chip">
+      <span class="hero-chip-dot"></span>
+      Agentes activos ahora en RD 🇩🇴
+    </div>
+    <h1 class="hero-title">
+      Automatiza tu negocio<br>desde <span>WhatsApp</span>
+    </h1>
+    <p class="hero-sub">
+      Un agente IA personalizado trabaja 24/7 gestionando tus tareas administrativas. Sin apps, sin técnicos, solo escribe y él ejecuta.
+    </p>
+    <div class="hero-cta">
+      <button class="btn-hero btn-hero-primary" onclick="openModal('register')">
+        🚀 Activar mi agente
+      </button>
+      <button class="btn-hero btn-hero-outline" onclick="document.getElementById('como').scrollIntoView({behavior:'smooth'})">
+        Ver cómo funciona
+      </button>
+    </div>
+    <div class="hero-stats">
+      <div class="stat">
+        <div class="stat-num">+50</div>
+        <div class="stat-label">Agentes activos</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">1hr</div>
+        <div class="stat-label">Setup rápido</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">24/7</div>
+        <div class="stat-label">Disponible</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DASHBOARD PREVIEW -->
+<section style="padding:0 24px 80px;background:#fff">
+  <div class="section-inner">
+    <div style="text-align:center;margin-bottom:32px">
+      <div class="section-label">Panel de control</div>
+      <div class="section-title">Tu agente en tu bolsillo</div>
+      <p class="section-sub" style="margin:0 auto">Ve las estadísticas, accede a tu QR y monitorea todo desde tu teléfono.</p>
+    </div>
+    <div class="dash-preview">
+      <div class="dash-header">
+        <div class="dash-header-left">
+          <div class="dash-avatar">🏪</div>
+          <div>
+            <div class="dash-company">Farmacia San José</div>
+            <div class="dash-role">Plan Profesional</div>
+          </div>
+        </div>
+        <div class="dash-status">
+          <div class="dash-status-dot"></div>
+          <span class="dash-status-text">Agente activo</span>
+        </div>
+      </div>
+      <div class="dash-body">
+        <div class="dash-kpis">
+          <div class="kpi">
+            <div class="kpi-num">147</div>
+            <div class="kpi-label">Tareas este mes</div>
+            <div class="kpi-trend">↑ 23% vs anterior</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-num">342</div>
+            <div class="kpi-label">Créditos restantes</div>
+            <div class="kpi-trend">de 500 totales</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-num">98%</div>
+            <div class="kpi-label">Uptime agente</div>
+            <div class="kpi-trend">Últimos 30 días</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-num">2.1s</div>
+            <div class="kpi-label">Resp. promedio</div>
+            <div class="kpi-trend">↓ Mejoró 0.4s</div>
+          </div>
+        </div>
+        <div class="dash-chart-label">Actividad semanal</div>
+        <div class="dash-bars">
+          <div class="bar" style="height:35%"></div>
+          <div class="bar" style="height:55%"></div>
+          <div class="bar" style="height:45%"></div>
+          <div class="bar active" style="height:80%"></div>
+          <div class="bar" style="height:60%"></div>
+          <div class="bar" style="height:70%"></div>
+          <div class="bar active" style="height:90%"></div>
+        </div>
+        <div class="dash-qr-section">
+          <div class="qr-mock">📱</div>
+          <div style="flex:1">
+            <div class="qr-info-title">Tu código QR de acceso</div>
+            <div class="qr-info-sub">Escanéalo para conectar tu WhatsApp. Compártelo con tu equipo para dar acceso.</div>
+            <button class="qr-btn">Ver QR completo</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features" class="features-bg">
+  <div class="section-inner">
+    <div class="section-label">Capacidades</div>
+    <div class="section-title">Todo lo que tu agente puede hacer</div>
+    <p class="section-sub">Desde notas de voz hasta documentos complejos — tu agente entiende y ejecuta.</p>
+    <div class="features-grid">
+      <div class="feat-card">
+        <div class="feat-icon">🎙️</div>
+        <div class="feat-title">Notas de voz</div>
+        <div class="feat-desc">Habla en lugar de escribir. Tu agente transcribe y entiende tu audio perfectamente en español.</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">📄</div>
+        <div class="feat-title">Genera documentos</div>
+        <div class="feat-desc">Planificaciones, reportes, facturas, contratos — generados y enviados al instante en Word o PDF.</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">📊</div>
+        <div class="feat-title">Análisis de archivos</div>
+        <div class="feat-desc">Envía Excel, PDF o imágenes por WhatsApp y tu agente extrae la información y responde.</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">📅</div>
+        <div class="feat-title">Agenda y recordatorios</div>
+        <div class="feat-desc">Gestiona tu calendario, crea eventos y recibe recordatorios automáticos sin esfuerzo.</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">📈</div>
+        <div class="feat-title">Reportes automáticos</div>
+        <div class="feat-desc">Recibe reportes semanales de tu actividad directamente en WhatsApp cada lunes.</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🔗</div>
+        <div class="feat-title">Google Drive integrado</div>
+        <div class="feat-desc">Todos tus documentos organizados automáticamente en carpetas en tu Google Drive.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="como">
+  <div class="section-inner">
+    <div class="section-label">Proceso</div>
+    <div class="section-title">Activo en 3 pasos</div>
+    <div class="how-steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-title">Elige tu plan</div>
+        <div class="step-desc">Selecciona el plan que mejor se adapta a tu negocio y paga de forma segura con PayPal.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-title">Escanea tu QR</div>
+        <div class="step-desc">Tu QR único aparece en tu panel. Escanéalo con WhatsApp y tu agente queda conectado al instante.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-title">Delega y opera</div>
+        <div class="step-desc">Escribe o habla con tu agente desde WhatsApp. Él ejecuta, genera y organiza todo por ti 24/7.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="planes" style="background:#fff">
+  <div class="section-inner">
+    <div class="section-label">Precios</div>
+    <div class="section-title">Simple y transparente</div>
+    <p class="section-sub">Sin contratos. Sin sorpresas. Cancela cuando quieras.</p>
+    <div class="pricing-grid">
+
+      <div class="price-card">
+        <div class="price-plan">Básico</div>
+        <div class="price-amount"><span class="price-currency">RD$</span>500<span class="price-period">/mes</span></div>
+        <div class="price-desc">Para profesionales y emprendedores.</div>
+        <ul class="price-features">
+          <li><span class="check">✓</span>200 créditos mensuales</li>
+          <li><span class="check">✓</span>Agente WhatsApp 24/7</li>
+          <li><span class="check">✓</span>Notas de voz</li>
+          <li><span class="check">✓</span>3 tipos de documentos</li>
+          <li><span class="check">✓</span>Soporte por chat</li>
+        </ul>
+        <button class="btn-plan btn-plan-outline" onclick="openModal('register','basico')">Comenzar →</button>
+      </div>
+
+      <div class="price-card popular">
+        <div class="popular-badge">⭐ Más popular</div>
+        <div class="price-plan">Profesional</div>
+        <div class="price-amount"><span class="price-currency">RD$</span>1,200<span class="price-period">/mes</span></div>
+        <div class="price-desc">Para negocios y centros educativos.</div>
+        <ul class="price-features">
+          <li><span class="check">✓</span>500 créditos mensuales</li>
+          <li><span class="check">✓</span>Agente WhatsApp 24/7</li>
+          <li><span class="check">✓</span>Notas de voz + archivos</li>
+          <li><span class="check">✓</span>Todos los documentos</li>
+          <li><span class="check">✓</span>Google Drive integrado</li>
+          <li><span class="check">✓</span>Reportes automáticos</li>
+          <li><span class="check">✓</span>Soporte prioritario</li>
+        </ul>
+        <button class="btn-plan btn-plan-primary" onclick="openModal('register','profesional')">Activar ahora →</button>
+      </div>
+
+      <div class="price-card">
+        <div class="price-plan">Enterprise</div>
+        <div class="price-amount"><span class="price-currency">RD$</span>3,500<span class="price-period">/mes</span></div>
+        <div class="price-desc">Para empresas con múltiples usuarios.</div>
+        <ul class="price-features">
+          <li><span class="check">✓</span>Créditos ilimitados</li>
+          <li><span class="check">✓</span>Múltiples agentes</li>
+          <li><span class="check">✓</span>Facturación electrónica</li>
+          <li><span class="check">✓</span>API personalizada</li>
+          <li><span class="check">✓</span>Onboarding dedicado</li>
+          <li><span class="check">✓</span>Soporte 24/7</li>
+        </ul>
+        <button class="btn-plan btn-plan-outline" onclick="openModal('register','enterprise')">Contactar →</button>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="footer-brand-icon">🤖</div>
+      <span class="footer-brand-name">Agentia.ia</span>
+    </div>
+    <div class="footer-links">
+      <a href="#features" class="footer-link">Capacidades</a>
+      <a href="#como" class="footer-link">Cómo funciona</a>
+      <a href="#planes" class="footer-link">Planes</a>
+    </div>
+    <div class="footer-copy">© 2026 Agentia · DGtech 🇩🇴</div>
+  </div>
+</footer>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal" onclick="handleOverlayClick(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-title">Crear cuenta</span>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+
+      <!-- AUTH TABS -->
+      <div class="auth-tabs" id="auth-tabs">
+        <button class="auth-tab active" onclick="switchTab('register')">Registrarse</button>
+        <button class="auth-tab" onclick="switchTab('login')">Iniciar sesión</button>
+      </div>
+
+      <!-- STEP 0: PERFIL -->
+      <div class="modal-step active" id="modal-step-0">
+        <div class="steps-indicator">
+          <div class="step-dot active" id="dot-0"></div>
+          <div class="step-dot" id="dot-1"></div>
+          <div class="step-dot" id="dot-2"></div>
+          <div class="step-dot" id="dot-3"></div>
+          <span class="step-label">Paso 1 de 4</span>
+        </div>
+        <p style="font-size:15px;font-weight:600;margin-bottom:16px">¿Qué tipo de negocio tienes?</p>
+        <div class="perfil-grid" id="perfil-grid">
+          <button class="perfil-btn" onclick="selectPerfil('Centro Educativo',this)"><span class="perfil-emoji">🏫</span>Centro Educativo</button>
+          <button class="perfil-btn" onclick="selectPerfil('Docente',this)"><span class="perfil-emoji">👨‍🏫</span>Docente</button>
+          <button class="perfil-btn" onclick="selectPerfil('Colmado',this)"><span class="perfil-emoji">🏪</span>Colmado</button>
+          <button class="perfil-btn" onclick="selectPerfil('Clínica',this)"><span class="perfil-emoji">🏥</span>Clínica</button>
+          <button class="perfil-btn" onclick="selectPerfil('Empresa',this)"><span class="perfil-emoji">💼</span>Empresa</button>
+          <button class="perfil-btn" onclick="selectPerfil('Otro',this)"><span class="perfil-emoji">✨</span>Otro</button>
+        </div>
+        <button class="btn-continue" onclick="goStep(1)" style="margin-top:8px">Continuar →</button>
+      </div>
+
+      <!-- STEP 1: DATOS -->
+      <div class="modal-step" id="modal-step-1">
+        <div class="steps-indicator">
+          <div class="step-dot done" id="dot-0b"></div>
+          <div class="step-dot active" id="dot-1b"></div>
+          <div class="step-dot" id="dot-2b"></div>
+          <div class="step-dot" id="dot-3b"></div>
+          <span class="step-label">Paso 2 de 4</span>
+        </div>
+        <button class="btn-back" onclick="goStep(0)">← Volver</button>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Nombre</label>
+            <input class="form-input" id="inp-nombre" placeholder="Tu nombre" type="text">
+          </div>
+          <div class="form-group">
+            <label class="form-label">WhatsApp</label>
+            <input class="form-input" id="inp-wa" placeholder="8091234567" type="tel">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Nombre del negocio / institución</label>
+          <input class="form-input" id="inp-empresa" placeholder="Ej: Farmacia San José" type="text">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Correo electrónico</label>
+          <input class="form-input" id="inp-email" placeholder="correo@ejemplo.com" type="email">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Contraseña</label>
+          <input class="form-input" id="inp-pass" placeholder="Mínimo 8 caracteres" type="password">
+        </div>
+        <button class="btn-continue" onclick="goStep(2)">Continuar →</button>
+      </div>
+
+      <!-- STEP 2: PLAN -->
+      <div class="modal-step" id="modal-step-2">
+        <div class="steps-indicator">
+          <div class="step-dot done"></div>
+          <div class="step-dot done"></div>
+          <div class="step-dot active"></div>
+          <div class="step-dot"></div>
+          <span class="step-label">Paso 3 de 4</span>
+        </div>
+        <button class="btn-back" onclick="goStep(1)">← Volver</button>
+        <p style="font-size:15px;font-weight:600;margin-bottom:16px">Selecciona tu plan</p>
+        <div class="plan-select-grid">
+          <button class="plan-select-btn" id="plan-basico" onclick="selectPlan('basico',this)">
+            <div><div class="plan-select-name">Básico</div><div class="plan-select-credits">200 créditos/mes</div></div>
+            <div class="plan-select-price">RD$500</div>
+          </button>
+          <button class="plan-select-btn selected" id="plan-profesional" onclick="selectPlan('profesional',this)">
+            <div><div class="plan-select-name">Profesional ⭐</div><div class="plan-select-credits">500 créditos/mes</div></div>
+            <div class="plan-select-price">RD$1,200</div>
+          </button>
+          <button class="plan-select-btn" id="plan-enterprise" onclick="selectPlan('enterprise',this)">
+            <div><div class="plan-select-name">Enterprise</div><div class="plan-select-credits">Créditos ilimitados</div></div>
+            <div class="plan-select-price">RD$3,500</div>
+          </button>
+        </div>
+        <button class="btn-paypal" onclick="goStep(3)" style="margin-top:16px">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797h-2.19c-.524 0-.968.382-1.05.9l-1.12 7.106zm14.146-14.42a3.35 3.35 0 0 0-.607-.541c-.013.076-.026.175-.041.254-.93 4.778-4.005 7.201-9.138 7.201h-2.19a.563.563 0 0 0-.556.479l-1.187 7.527h-.099l-.23 1.487a.351.351 0 0 0 .347.4h3.08c.458 0 .85-.334.922-.784l.038-.196.734-4.653.047-.256a.932.932 0 0 1 .92-.784h.58c3.76 0 6.705-1.528 7.565-5.946.36-1.847.173-3.388-.68-4.488z"/></svg>
+          Pagar con PayPal
+        </button>
+      </div>
+
+      <!-- STEP 3: QR -->
+      <div class="modal-step" id="modal-step-3">
+        <div class="steps-indicator">
+          <div class="step-dot done"></div>
+          <div class="step-dot done"></div>
+          <div class="step-dot done"></div>
+          <div class="step-dot active"></div>
+          <span class="step-label">¡Último paso!</span>
+        </div>
+        <div class="qr-display">
+          <div class="qr-big" id="qr-container">
+            <span id="qr-spinner" style="font-size:40px" class="qr-loading">⟳</span>
+          </div>
+          <div class="qr-title" id="qr-status">Generando tu QR...</div>
+          <div class="qr-sub" id="qr-instructions">Espera un momento, estamos preparando tu agente personalizado.</div>
+          <div class="qr-actions" id="qr-actions" style="display:none">
+            <button class="btn-qr btn-qr-secondary" onclick="downloadQR()">⬇ Descargar</button>
+            <button class="btn-qr btn-qr-primary" onclick="refreshQR()">↻ Actualizar</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- LOGIN -->
+      <div class="modal-step" id="modal-login" style="display:none">
+        <div class="form-group">
+          <label class="form-label">Correo electrónico</label>
+          <input class="form-input" placeholder="correo@ejemplo.com" type="email">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Contraseña</label>
+          <input class="form-input" placeholder="Tu contraseña" type="password">
+        </div>
+        <button class="btn-continue">Entrar a mi panel →</button>
+        <p style="text-align:center;margin-top:12px;font-size:13px;color:var(--on-surface-3)">¿Olvidaste tu contraseña? <a href="#" style="color:var(--primary)">Recuperar</a></p>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- PWA INSTALL BANNER -->
+<div class="pwa-banner" id="pwa-banner">
+  <div class="pwa-icon">🤖</div>
+  <div class="pwa-text">
+    <div class="pwa-title">Instalar Agentia</div>
+    <div class="pwa-sub">Accede más rápido desde tu pantalla de inicio</div>
+  </div>
+  <button class="btn-install" id="pwa-install-btn">Instalar</button>
+  <button class="pwa-dismiss" onclick="dismissPWA()">✕</button>
+</div>
+
+<script>
+// ---- STATE ----
+let currentStep = 0;
+let selectedPerfil = '';
+let selectedPlan = 'profesional';
+let isLoginMode = false;
+let deferredPrompt = null;
+
+// ---- MODAL ----
+function openModal(mode, plan) {
+  document.getElementById('modal').classList.add('active');
+  document.body.style.overflow = 'hidden';
+  if(plan) selectPlanById(plan);
+  if(mode === 'login') switchTab('login');
+  else switchTab('register');
+}
+function closeModal() {
+  document.getElementById('modal').classList.remove('active');
+  document.body.style.overflow = '';
+}
+function handleOverlayClick(e) {
+  if(e.target === document.getElementById('modal')) closeModal();
+}
+function switchTab(tab) {
+  isLoginMode = (tab === 'login');
+  document.querySelectorAll('.auth-tab').forEach((t,i) => {
+    t.classList.toggle('active', (i===0 && tab==='register') || (i===1 && tab==='login'));
+  });
+  document.getElementById('modal-title').textContent = tab === 'login' ? 'Iniciar sesión' : 'Crear cuenta';
+  const loginEl = document.getElementById('modal-login');
+  const steps = document.querySelectorAll('.modal-step:not(#modal-login)');
+  if(tab === 'login') {
+    steps.forEach(s => s.style.display = 'none');
+    loginEl.style.display = 'block';
+  } else {
+    steps.forEach(s => s.style.display = '');
+    loginEl.style.display = 'none';
+    goStep(0);
+  }
+}
+
+// ---- STEPS ----
+function goStep(n) {
+  document.querySelectorAll('.modal-step').forEach(s => {
+    if(s.id !== 'modal-login') s.classList.remove('active');
+  });
+  const target = document.getElementById(`modal-step-${n}`);
+  if(target) { target.classList.add('active'); currentStep = n; }
+  if(n === 3) startQRGeneration();
+}
+
+// ---- PERFIL ----
+function selectPerfil(p, el) {
+  selectedPerfil = p;
+  document.querySelectorAll('.perfil-btn').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+// ---- PLAN ----
+function selectPlan(p, el) {
+  selectedPlan = p;
+  document.querySelectorAll('.plan-select-btn').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+}
+function selectPlanById(p) {
+  selectedPlan = p;
+  document.querySelectorAll('.plan-select-btn').forEach(b => b.classList.remove('selected'));
+  const el = document.getElementById(`plan-${p}`);
+  if(el) el.classList.add('selected');
+}
+
+// ---- QR GENERATION ----
+function startQRGeneration() {
+  const container = document.getElementById('qr-container');
+  const status = document.getElementById('qr-status');
+  const instructions = document.getElementById('qr-instructions');
+  const actions = document.getElementById('qr-actions');
+  const spinner = document.getElementById('qr-spinner');
+
+  spinner.style.display = 'block';
+  actions.style.display = 'none';
+  status.textContent = 'Generando tu QR...';
+  instructions.textContent = 'Preparando tu agente personalizado para ' + (selectedPerfil || 'tu negocio') + '.';
+
+  setTimeout(() => {
+    spinner.style.display = 'none';
+    // Render QR usando API de QR pública
+    container.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=agentia-${Date.now()}&color=1a73e8&bgcolor=ffffff&qzone=1" style="width:160px;height:160px;border-radius:8px" alt="QR Code" id="qr-img">`;
+    status.textContent = '✅ ¡Tu QR está listo!';
+    instructions.textContent = 'Abre WhatsApp → Dispositivos vinculados → Vincular dispositivo → Escanea este código.';
+    actions.style.display = 'flex';
+  }, 2500);
+}
+
+function downloadQR() {
+  const img = document.getElementById('qr-img');
+  if(!img) return;
+  const a = document.createElement('a');
+  a.href = img.src;
+  a.download = 'agentia-qr.png';
+  a.click();
+}
+
+function refreshQR() {
+  startQRGeneration();
+}
+
+// ---- PWA ----
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  setTimeout(() => {
+    document.getElementById('pwa-banner').classList.add('show');
+  }, 3000);
+});
+
+document.getElementById('pwa-install-btn').addEventListener('click', async () => {
+  if(deferredPrompt) {
+    deferredPrompt.prompt();
+    const result = await deferredPrompt.userChoice;
+    deferredPrompt = null;
+    document.getElementById('pwa-banner').classList.remove('show');
+  }
+});
+
+function dismissPWA() {
+  document.getElementById('pwa-banner').classList.remove('show');
+}
+
+// Service Worker
+if('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/agentia/sw.js').catch(() => {});
+}
+</script>
+</body>
+</html>
