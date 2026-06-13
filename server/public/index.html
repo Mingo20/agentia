@@ -4,289 +4,369 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="theme-color" content="#25D366">
-<title>Delega IA — Panel de Conexión WhatsApp</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<title>Delega IA — Conexión WhatsApp</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-font-smoothing:antialiased}
-:root{--p:#25D366;--pd:#128C7E;--pl:#e8f5e9;--bg:#f7faf8;--on:#111827;--on2:#4b5563;--on3:#9ca3af;--border:#e5e7eb;--r:14px;--shl:0 8px 40px rgba(0,0,0,.12);--tr:all .25s cubic-bezier(.4,0,.2,1)}
-html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:var(--on)}
-body{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:20px;background:linear-gradient(160deg,#fff 0%,#f0fbf5 50%,#e8f5e9 100%)}
-
-/* LOGO */
-.logo{display:flex;align-items:center;gap:10px;margin-bottom:32px}
-.logo-mark{width:44px;height:44px;background:var(--p);border-radius:13px;display:flex;align-items:center;justify-content:center}
-.logo-mark svg{width:24px;height:24px;color:#fff}
-.logo-name{font-size:22px;font-weight:800;letter-spacing:-.5px}
-.logo-name span{color:var(--p)}
-
-/* CARD */
-.card{background:#fff;border-radius:28px;padding:36px;width:100%;max-width:420px;box-shadow:var(--shl);border:1px solid var(--border);text-align:center}
-
-/* STATUS BADGE */
-.status-badge{display:inline-flex;align-items:center;gap:8px;padding:7px 18px;border-radius:20px;font-size:13px;font-weight:700;margin-bottom:24px;transition:var(--tr)}
-.status-badge.disconnected{background:#fee2e2;color:#b91c1c}
-.status-badge.qr_ready{background:#fef3c7;color:#92400e}
-.status-badge.connecting{background:#dbeafe;color:#1e40af}
-.status-badge.connected{background:#d1fae5;color:#065f46}
-.status-dot{width:8px;height:8px;border-radius:50%;background:currentColor;animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.3)}}
-
-/* CARD TITLE */
-.card-title{font-size:22px;font-weight:800;letter-spacing:-.5px;margin-bottom:8px}
-.card-sub{font-size:14px;color:var(--on2);line-height:1.6;margin-bottom:28px}
-
-/* QR FRAME */
-.qr-frame{
-  width:220px;height:220px;margin:0 auto 24px;
-  background:#fff;border:2px solid var(--border);border-radius:20px;
-  display:flex;align-items:center;justify-content:center;
-  position:relative;overflow:hidden;transition:var(--tr);
+:root{--p:#25D366;--pd:#128C7E;--pl:#e8f5e9;--bg:#f0fbf5;--on:#111827;--on2:#4b5563;--on3:#9ca3af;--border:#e5e7eb}
+html,body{height:100%;font-family:'Inter',sans-serif}
+body{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  min-height:100vh;padding:20px;
+  background:linear-gradient(135deg,#f0fbf5 0%,#e8f5e9 50%,#fff 100%);
 }
-.qr-frame:hover{border-color:var(--p);box-shadow:0 0 0 4px rgba(37,211,102,.1)}
-.qr-frame img{width:200px;height:200px;border-radius:12px;display:block}
-.qr-placeholder{display:flex;flex-direction:column;align-items:center;gap:12px}
-.qr-spinner{width:40px;height:40px;border:3px solid var(--pl);border-top-color:var(--p);border-radius:50%;animation:spin 1s linear infinite}
+
+/* TOP LOGO */
+.top-logo{display:flex;align-items:center;gap:10px;margin-bottom:28px}
+.lm{width:42px;height:42px;background:var(--p);border-radius:12px;display:flex;align-items:center;justify-content:center}
+.lm svg{width:22px;height:22px;color:#fff}
+.ln{font-size:20px;font-weight:800;color:var(--on)}
+.ln span{color:var(--p)}
+.ln small{font-size:11px;font-weight:500;color:var(--on3);display:block;margin-top:-2px}
+
+/* MAIN CARD */
+.card{
+  background:#fff;border-radius:28px;padding:32px 28px;
+  width:100%;max-width:400px;
+  box-shadow:0 20px 60px rgba(37,211,102,.12),0 4px 20px rgba(0,0,0,.06);
+  border:1px solid rgba(37,211,102,.15);
+  text-align:center;
+}
+
+/* STATUS PILL */
+.pill{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:7px 18px;border-radius:20px;
+  font-size:12px;font-weight:700;margin-bottom:22px;
+  transition:all .3s;letter-spacing:.2px;
+}
+.pill.starting  {background:#f1f5f9;color:#64748b}
+.pill.connecting{background:#dbeafe;color:#1d4ed8}
+.pill.qr_ready  {background:#fef9c3;color:#a16207;animation:pillPulse 2s infinite}
+.pill.authenticated{background:#d1fae5;color:#065f46}
+.pill.connected {background:#d1fae5;color:#065f46}
+.pill.error     {background:#fee2e2;color:#b91c1c}
+.pill.disconnected{background:#f3f4f6;color:#6b7280}
+@keyframes pillPulse{0%,100%{box-shadow:0 0 0 0 rgba(234,179,8,.3)}50%{box-shadow:0 0 0 8px rgba(234,179,8,0)}}
+.pill-dot{width:8px;height:8px;border-radius:50%;background:currentColor;animation:pdot 2s infinite}
+@keyframes pdot{0%,100%{opacity:1}50%{opacity:.4}}
+
+.card-title{font-size:20px;font-weight:800;letter-spacing:-.4px;margin-bottom:8px;color:var(--on)}
+.card-sub{font-size:13px;color:var(--on2);line-height:1.6;margin-bottom:24px}
+
+/* QR BOX */
+.qr-box{
+  width:220px;height:220px;margin:0 auto 22px;
+  background:#f8fffe;border:2px solid var(--border);border-radius:20px;
+  display:flex;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;transition:all .3s;
+}
+.qr-box.active{border-color:var(--p);box-shadow:0 0 0 6px rgba(37,211,102,.08)}
+.qr-box img{width:196px;height:196px;border-radius:12px;display:block}
+.qr-loading{display:flex;flex-direction:column;align-items:center;gap:14px}
+.spinner{width:44px;height:44px;border:3px solid var(--pl);border-top-color:var(--p);border-radius:50%;animation:spin 1s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.qr-placeholder p{font-size:13px;color:var(--on3);font-weight:500}
+.qr-loading p{font-size:13px;color:var(--on3);font-weight:500}
 
-/* CONNECTED STATE */
-.connected-card{display:flex;flex-direction:column;align-items:center;gap:12px;padding:16px 0}
-.conn-icon{width:80px;height:80px;background:var(--pl);border-radius:50%;display:flex;align-items:center;justify-content:center}
-.conn-icon svg{width:44px;height:44px;color:var(--p)}
-.conn-name{font-size:18px;font-weight:700}
-.conn-phone{font-size:14px;color:var(--on3)}
-.conn-time{font-size:12px;color:var(--p);font-weight:600}
+/* CONNECTED BOX */
+.conn-box{padding:16px 0;display:flex;flex-direction:column;align-items:center;gap:10px}
+.conn-av{width:72px;height:72px;background:var(--pl);border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:4px}
+.conn-av svg{width:38px;height:38px;color:var(--p)}
+.conn-name{font-size:18px;font-weight:700;color:var(--on)}
+.conn-phone{font-size:13px;color:var(--on3)}
+.conn-badge{background:var(--pl);color:var(--pd);font-size:12px;font-weight:700;padding:5px 14px;border-radius:20px;margin-top:4px}
 
-/* STEPS */
-.steps{display:flex;flex-direction:column;gap:10px;margin-bottom:24px;text-align:left}
-.step{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--bg);border-radius:12px}
-.step-num{width:28px;height:28px;border-radius:50%;background:var(--p);color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.step p{font-size:13px;color:var(--on2);line-height:1.4}
+/* PASOS */
+.steps{display:flex;flex-direction:column;gap:8px;margin-bottom:20px;text-align:left}
+.step{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;background:#f8fffe;border-radius:12px}
+.sn{width:24px;height:24px;border-radius:50%;background:var(--p);color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.step p{font-size:12px;color:var(--on2);line-height:1.5}
+.step p strong{color:var(--on);font-weight:700}
 
 /* BUTTONS */
-.btn-refresh{width:100%;padding:13px;border-radius:50px;background:var(--p);color:#fff;border:none;font-size:15px;font-weight:700;cursor:pointer;transition:var(--tr);display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:12px}
-.btn-refresh:hover{background:var(--pd);transform:translateY(-1px);box-shadow:0 4px 14px rgba(37,211,102,.35)}
-.btn-refresh:disabled{background:var(--border);color:var(--on3);cursor:not-allowed;transform:none;box-shadow:none}
-.btn-secondary{width:100%;padding:11px;border-radius:50px;background:#fff;color:var(--on2);border:1.5px solid var(--border);font-size:14px;font-weight:600;cursor:pointer;transition:var(--tr)}
-.btn-secondary:hover{border-color:var(--p);color:var(--pd)}
+.btn-p{
+  width:100%;padding:13px;border-radius:50px;
+  background:var(--p);color:#fff;border:none;
+  font-size:14px;font-weight:700;cursor:pointer;
+  transition:all .25s;display:flex;align-items:center;
+  justify-content:center;gap:8px;margin-bottom:10px;
+}
+.btn-p:hover:not(:disabled){background:var(--pd);transform:translateY(-1px);box-shadow:0 6px 20px rgba(37,211,102,.35)}
+.btn-p:disabled{background:var(--border);color:var(--on3);cursor:not-allowed;transform:none}
+.btn-s{
+  width:100%;padding:11px;border-radius:50px;background:#fff;
+  color:var(--on2);border:1.5px solid var(--border);font-size:13px;
+  font-weight:600;cursor:pointer;transition:all .25s;
+}
+.btn-s:hover{border-color:var(--p);color:var(--pd)}
 
-/* SERVER INFO */
-.server-info{margin-top:24px;padding:16px;background:var(--bg);border-radius:16px;display:grid;grid-template-columns:1fr 1fr;gap:10px;text-align:left;width:100%}
-.si{padding:10px 12px;background:#fff;border-radius:10px;border:1px solid var(--border)}
-.si-label{font-size:10px;font-weight:700;color:var(--on3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
-.si-val{font-size:14px;font-weight:600;color:var(--on)}
-.si-val.green{color:var(--p)}
+/* SERVER STATS */
+.stats{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:8px;
+  margin-top:20px;padding-top:16px;
+  border-top:1px solid var(--border);
+}
+.stat{text-align:center}
+.stat-n{font-size:18px;font-weight:800;color:var(--p)}
+.stat-l{font-size:10px;color:var(--on3);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
 
-/* FOOTER */
-.page-footer{margin-top:24px;font-size:12px;color:var(--on3);text-align:center}
-.page-footer span{color:var(--p);font-weight:600}
+/* TIMER QR */
+.qr-timer{font-size:11px;color:var(--on3);margin-top:-10px;margin-bottom:16px}
+.qr-timer span{color:#a16207;font-weight:700}
 
-@media(max-width:460px){
-  .card{padding:24px 20px;border-radius:20px}
-  .qr-frame{width:180px;height:180px}
-  .qr-frame img{width:160px;height:160px}
+footer{
+  margin-top:20px;font-size:11px;color:var(--on3);text-align:center;line-height:1.7
+}
+footer strong{color:var(--p)}
+
+@media(max-width:440px){
+  .card{padding:24px 18px;border-radius:22px}
+  .qr-box{width:190px;height:190px}
+  .qr-box img{width:170px;height:170px}
 }
 </style>
 </head>
 <body>
 
-<div class="logo">
-  <div class="logo-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
-  <span class="logo-name">Delega <span>IA</span></span>
+<div class="top-logo">
+  <div class="lm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
+  <div class="ln">Delega <span>IA</span><small>Panel de conexión WhatsApp</small></div>
 </div>
 
 <div class="card">
 
-  <!-- Status badge -->
-  <div class="status-badge disconnected" id="status-badge">
-    <span class="status-dot"></span>
-    <span id="status-text">Conectando...</span>
+  <!-- Status pill -->
+  <div class="pill starting" id="pill">
+    <span class="pill-dot"></span>
+    <span id="pill-text">Iniciando servidor...</span>
   </div>
 
-  <!-- Content area -->
-  <div id="content-area">
-    <!-- Loading state -->
-    <div id="state-loading">
-      <div class="card-title">Iniciando servidor</div>
-      <p class="card-sub">Estableciendo conexión con WhatsApp. Esto puede tomar hasta 30 segundos...</p>
-      <div class="qr-frame">
-        <div class="qr-placeholder">
-          <div class="qr-spinner"></div>
-          <p>Generando QR...</p>
+  <!-- Dynamic content -->
+  <div id="content">
+    <!-- Estado: cargando (default) -->
+    <div id="s-loading">
+      <div class="card-title">Preparando conexión</div>
+      <p class="card-sub">El servidor está iniciando WhatsApp. Esto toma hasta 30 segundos la primera vez.</p>
+      <div class="qr-box">
+        <div class="qr-loading">
+          <div class="spinner"></div>
+          <p>Generando código QR...</p>
         </div>
       </div>
     </div>
 
-    <!-- QR State -->
-    <div id="state-qr" style="display:none">
-      <div class="card-title">Escanea el código QR</div>
-      <p class="card-sub">Abre WhatsApp → Dispositivos vinculados → Vincular dispositivo → Apunta al código</p>
-      <div class="qr-frame" id="qr-frame">
-        <div class="qr-placeholder"><div class="qr-spinner"></div><p>Cargando QR...</p></div>
+    <!-- Estado: QR listo -->
+    <div id="s-qr" style="display:none">
+      <div class="card-title">Escanea este código</div>
+      <p class="card-sub">Abre WhatsApp en tu teléfono y escanea el código para conectar tu agente.</p>
+      <div class="qr-box active" id="qr-box">
+        <div class="qr-loading"><div class="spinner"></div><p>Cargando QR...</p></div>
       </div>
+      <p class="qr-timer">El código expira en <span id="qr-countdown">120</span> segundos</p>
       <div class="steps">
-        <div class="step"><div class="step-num">1</div><p>Abre <strong>WhatsApp</strong> en tu teléfono</p></div>
-        <div class="step"><div class="step-num">2</div><p>Toca los <strong>3 puntos</strong> → <strong>Dispositivos vinculados</strong></p></div>
-        <div class="step"><div class="step-num">3</div><p>Toca <strong>"Vincular un dispositivo"</strong> y escanea el código</p></div>
+        <div class="step">
+          <div class="sn">1</div>
+          <p>Abre <strong>WhatsApp</strong> en tu teléfono → toca los <strong>3 puntos ⋮</strong></p>
+        </div>
+        <div class="step">
+          <div class="sn">2</div>
+          <p>Selecciona <strong>"Dispositivos vinculados"</strong> → <strong>"Vincular un dispositivo"</strong></p>
+        </div>
+        <div class="step">
+          <div class="sn">3</div>
+          <p>Apunta la cámara al código QR y <strong>¡listo!</strong> Tu agente quedará activo 24/7</p>
+        </div>
       </div>
     </div>
 
-    <!-- Connected State -->
-    <div id="state-connected" style="display:none">
-      <div class="card-title">¡WhatsApp Activo! 🎉</div>
-      <p class="card-sub">Tu agente Delega IA está conectado y respondiendo mensajes automáticamente.</p>
-      <div class="connected-card">
-        <div class="conn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.85 13.5a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.77 2.68h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 21.73 17z"/></svg></div>
-        <div class="conn-name" id="conn-name">Cuenta conectada</div>
+    <!-- Estado: conectado -->
+    <div id="s-connected" style="display:none">
+      <div class="card-title">¡Agente Activo! 🎉</div>
+      <p class="card-sub">Tu asistente <strong>Delega IA</strong> está conectado y respondiendo mensajes automáticamente.</p>
+      <div class="conn-box">
+        <div class="conn-av"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.85 13.5a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.77 2.68h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 21.73 17z"/></svg></div>
+        <div class="conn-name" id="conn-name">WhatsApp Conectado</div>
         <div class="conn-phone" id="conn-phone"></div>
-        <div class="conn-time" id="conn-time">✅ Agente activo</div>
+        <div class="conn-badge">✅ Agente respondiendo 24/7</div>
+      </div>
+    </div>
+
+    <!-- Estado: error -->
+    <div id="s-error" style="display:none">
+      <div class="card-title">Error de conexión</div>
+      <p class="card-sub">No se pudo conectar con WhatsApp. Intenta regenerar el código QR.</p>
+      <div class="qr-box" style="margin-bottom:20px">
+        <div style="font-size:48px">⚠️</div>
       </div>
     </div>
   </div>
 
-  <!-- Buttons -->
-  <button class="btn-refresh" id="btn-action" onclick="handleAction()">
+  <!-- Botones -->
+  <button class="btn-p" id="btn-main" onclick="handleBtn()">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-    <span id="btn-text">Actualizar estado</span>
+    <span id="btn-txt">Actualizar</span>
   </button>
-  <button class="btn-secondary" onclick="copyServerUrl()">📋 Copiar URL del servidor</button>
+  <button class="btn-s" onclick="copyUrl()">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline;vertical-align:middle;margin-right:5px"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+    Copiar enlace de este panel
+  </button>
 
-  <!-- Server info -->
-  <div class="server-info" id="server-info">
-    <div class="si"><div class="si-label">Estado</div><div class="si-val" id="si-status">...</div></div>
-    <div class="si"><div class="si-label">Uptime</div><div class="si-val green" id="si-uptime">...</div></div>
-    <div class="si"><div class="si-label">Sesiones</div><div class="si-val" id="si-sessions">0</div></div>
-    <div class="si"><div class="si-label">Versión</div><div class="si-val">v1.0.0</div></div>
+  <!-- Stats -->
+  <div class="stats">
+    <div class="stat"><div class="stat-n" id="st-status">--</div><div class="stat-l">Estado</div></div>
+    <div class="stat"><div class="stat-n" id="st-uptime">--</div><div class="stat-l">Activo</div></div>
+    <div class="stat"><div class="stat-n" id="st-version">v1</div><div class="stat-l">Versión</div></div>
   </div>
 </div>
 
-<div class="page-footer">Panel de conexión <span>Delega IA</span> · Desarrollado por <span>DGtech</span> 🇩🇴</div>
+<footer>
+  Panel de conexión <strong>Delega IA</strong> · Desarrollado por <strong>DGtech</strong> 🇩🇴<br>
+  <span id="server-url" style="font-size:10px;opacity:.6"></span>
+</footer>
 
 <script>
-const SERVER_URL = window.location.origin;
-let pollTimer = null;
-let refreshing = false;
+const BASE = window.location.origin;
+document.getElementById('server-url').textContent = BASE;
 
-async function fetchStatus() {
+let qrTimer = 120;
+let qrInterval = null;
+let busy = false;
+let currentStatus = '';
+
+const LABELS = {
+  starting:      'Iniciando servidor...',
+  connecting:    'Conectando con WhatsApp...',
+  qr_ready:      'Escanea el código QR',
+  authenticated: 'Autenticando...',
+  connected:     'WhatsApp Activo ✅',
+  error:         'Error de conexión',
+  disconnected:  'Desconectado'
+};
+
+async function getStatus() {
   try {
-    const r = await fetch(`${SERVER_URL}/api/qr/status`);
+    const r = await fetch(BASE + '/api/status');
     return await r.json();
-  } catch (e) {
-    return null;
-  }
+  } catch(e) { return null; }
 }
 
-async function fetchHealth() {
-  try {
-    const r = await fetch(`${SERVER_URL}/health`);
-    return await r.json();
-  } catch (e) {
-    return null;
-  }
+function updatePill(status) {
+  const p = document.getElementById('pill');
+  p.className = 'pill ' + status;
+  document.getElementById('pill-text').textContent = LABELS[status] || status;
 }
 
-function updateUI(status) {
-  if (!status) return;
-
-  const badge    = document.getElementById('status-badge');
-  const txt      = document.getElementById('status-text');
-  const stLoad   = document.getElementById('state-loading');
-  const stQR     = document.getElementById('state-qr');
-  const stConn   = document.getElementById('state-connected');
-  const btnTxt   = document.getElementById('btn-text');
-  const btnAct   = document.getElementById('btn-action');
-
-  // Update badge
-  badge.className = 'status-badge ' + status.status;
-  const labels = {
-    disconnected: '⚫ Desconectado',
-    qr_ready:     '🟡 QR listo para escanear',
-    connecting:   '🔵 Conectando...',
-    connected:    '🟢 WhatsApp Activo'
-  };
-  txt.textContent = labels[status.status] || status.status;
-
-  // Update server info
-  document.getElementById('si-status').textContent = status.status;
-  document.getElementById('si-sessions').textContent = (status.sessions || []).length;
-
-  // Show correct state
-  stLoad.style.display = 'none';
-  stQR.style.display   = 'none';
-  stConn.style.display = 'none';
-
-  if (status.status === 'qr_ready' && status.qr_image) {
-    stQR.style.display = 'block';
-    const frame = document.getElementById('qr-frame');
-    frame.innerHTML = `<img src="${status.qr_image}" alt="QR Code" />`;
-    btnTxt.textContent = 'Regenerar QR';
-    btnAct.disabled = false;
-  } else if (status.status === 'connected') {
-    stConn.style.display = 'block';
-    btnTxt.textContent = 'Desconectar y regenerar QR';
-    btnAct.disabled = false;
-    const s = (status.sessions || [])[0];
-    if (s) {
-      document.getElementById('conn-name').textContent = s.name || 'Cuenta conectada';
-      document.getElementById('conn-phone').textContent = '+' + s.phone;
-      const dt = new Date(s.connectedAt);
-      document.getElementById('conn-time').textContent = '✅ Conectado desde ' + dt.toLocaleTimeString('es');
-    }
-  } else {
-    stLoad.style.display = 'block';
-    btnTxt.textContent = 'Actualizar estado';
-    btnAct.disabled = (status.status === 'connecting');
-  }
-}
-
-async function updateHealth() {
-  const h = await fetchHealth();
-  if (h) {
-    const mins = Math.floor(h.uptime / 60);
-    const hrs  = Math.floor(mins / 60);
-    document.getElementById('si-uptime').textContent =
-      hrs > 0 ? `${hrs}h ${mins % 60}m` : `${mins}m`;
-  }
-}
-
-async function handleAction() {
-  if (refreshing) return;
-  refreshing = true;
-  const btn = document.getElementById('btn-action');
-  btn.disabled = true;
-  document.getElementById('btn-text').textContent = 'Procesando...';
-
-  try {
-    await fetch(`${SERVER_URL}/api/qr/refresh`, { method: 'POST' });
-    await new Promise(r => setTimeout(r, 3000));
-    await pollStatus();
-  } catch (e) {}
-
-  refreshing = false;
-  btn.disabled = false;
-}
-
-async function pollStatus() {
-  const s = await fetchStatus();
-  if (s) updateUI(s);
-  await updateHealth();
-}
-
-function copyServerUrl() {
-  navigator.clipboard.writeText(SERVER_URL).then(() => {
-    const btn = document.querySelector('.btn-secondary');
-    btn.textContent = '✅ URL copiada!';
-    setTimeout(() => btn.textContent = '📋 Copiar URL del servidor', 2000);
+function showState(state) {
+  ['loading','qr','connected','error'].forEach(s => {
+    document.getElementById('s-'+s).style.display = s===state?'block':'none';
   });
 }
 
-// Auto-poll every 4 seconds
-async function startPolling() {
-  await pollStatus();
-  pollTimer = setInterval(pollStatus, 4000);
+function formatUptime(secs) {
+  if (!secs) return '--';
+  if (secs < 60)   return secs + 's';
+  if (secs < 3600) return Math.floor(secs/60) + 'm';
+  return Math.floor(secs/3600) + 'h ' + Math.floor((secs%3600)/60) + 'm';
 }
 
-startPolling();
+function updateUI(data) {
+  if (!data) return;
+  const s = data.status;
+  currentStatus = s;
+  updatePill(s);
+  document.getElementById('st-status').textContent = {
+    starting:'--',connecting:'...',qr_ready:'QR',
+    authenticated:'Auth',connected:'ON',
+    error:'ERR',disconnected:'OFF'
+  }[s] || s;
+  document.getElementById('st-uptime').textContent = formatUptime(data.uptime);
+
+  const btn = document.getElementById('btn-main');
+  const btnTxt = document.getElementById('btn-txt');
+
+  if (s === 'qr_ready') {
+    showState('qr');
+    if (data.qr) {
+      document.getElementById('qr-box').innerHTML = `<img src="${data.qr}" alt="QR Code">`;
+    }
+    btnTxt.textContent = 'Regenerar código QR';
+    btn.disabled = false;
+    startQrCountdown();
+  } else if (s === 'connected') {
+    showState('connected');
+    stopQrCountdown();
+    if (data.session) {
+      document.getElementById('conn-name').textContent = data.session.name || 'WhatsApp Conectado';
+      const ph = data.session.phone ? '+' + data.session.phone : '';
+      document.getElementById('conn-phone').textContent = ph;
+    }
+    btnTxt.textContent = 'Desconectar y regenerar QR';
+    btn.disabled = false;
+  } else if (s === 'error') {
+    showState('error');
+    btnTxt.textContent = 'Reintentar conexión';
+    btn.disabled = false;
+    stopQrCountdown();
+  } else {
+    showState('loading');
+    btnTxt.textContent = 'Actualizando...';
+    btn.disabled = true;
+    stopQrCountdown();
+  }
+}
+
+function startQrCountdown() {
+  stopQrCountdown();
+  qrTimer = 120;
+  document.getElementById('qr-countdown').textContent = qrTimer;
+  qrInterval = setInterval(() => {
+    qrTimer--;
+    const el = document.getElementById('qr-countdown');
+    if (el) el.textContent = qrTimer;
+    if (qrTimer <= 0) {
+      stopQrCountdown();
+      handleBtn(); // auto-refresh QR
+    }
+  }, 1000);
+}
+
+function stopQrCountdown() {
+  if (qrInterval) { clearInterval(qrInterval); qrInterval = null; }
+}
+
+async function handleBtn() {
+  if (busy) return;
+  busy = true;
+  const btn = document.getElementById('btn-main');
+  btn.disabled = true;
+  document.getElementById('btn-txt').textContent = 'Procesando...';
+  stopQrCountdown();
+  showState('loading');
+  updatePill('connecting');
+  try {
+    await fetch(BASE + '/api/refresh', { method: 'POST' });
+    await new Promise(r => setTimeout(r, 4000));
+    await poll();
+  } catch(e) {}
+  busy = false;
+}
+
+async function poll() {
+  const data = await getStatus();
+  updateUI(data);
+}
+
+function copyUrl() {
+  navigator.clipboard.writeText(BASE).then(() => {
+    const b = document.querySelector('.btn-s');
+    b.textContent = '✅ ¡Enlace copiado!';
+    setTimeout(() => b.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline;vertical-align:middle;margin-right:5px"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copiar enlace de este panel', 2500);
+  });
+}
+
+// Auto-poll
+poll();
+setInterval(poll, 5000);
 </script>
 </body>
 </html>
