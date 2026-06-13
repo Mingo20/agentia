@@ -1,11 +1,10 @@
 /**
  * =========================================================
  * DELEGA IA — Servidor WhatsApp + QR
- * Desarrollado por DGtech
- * Deploy: Railway / Render
+ * Desarrollado por DGtech 🇩🇴
+ * Deploy: Render.com / Railway
  * =========================================================
  */
-
 require('dotenv').config();
 const express = require('express');
 const cors    = require('cors');
@@ -13,37 +12,35 @@ const qrcode  = require('qrcode');
 const axios   = require('axios');
 const path    = require('path');
 
-// WhatsApp Web.js
-const { Client, LocalAuth, MessageMedia } = require('whatsapp-web.js');
+const { Client, LocalAuth } = require('whatsapp-web.js');
 
 const app  = express();
 const PORT = process.env.PORT || 3000;
 
-// ─── Middleware ──────────────────────────────────────────
 app.use(cors({ origin: '*' }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // ─── Estado global ───────────────────────────────────────
-let QR_DATA      = null;   // base64 del QR actual
-let QR_IMAGE_URL = null;   // URL de imagen QR
-let WA_STATUS    = 'disconnected'; // disconnected | qr_ready | connecting | connected
+let QR_IMAGE_URL = null;
+let WA_STATUS    = 'starting';
 let WA_CLIENT    = null;
-let SESSIONS     = {};     // { phone: { status, connectedAt } }
+let SESSION_INFO = null;
+let UPTIME_START = Date.now();
 
-// ─── Base44 Config ───────────────────────────────────────
-const BASE44_APP_ID  = process.env.BASE44_APP_ID  || '69bf571e53cddb8789552b4e';
+const BASE44_APP_ID  = process.env.BASE44_APP_ID || '69bf571e53cddb8789552b4e';
 const BASE44_API_URL = `https://app.base44.com/api/v1/apps/${BASE44_APP_ID}/functions`;
 
-// ─── Inicializar cliente WhatsApp ─────────────────────────
+// ─── Inicializar WhatsApp ─────────────────────────────────
 function initWhatsApp() {
-  console.log('🤖 Iniciando cliente WhatsApp...');
+  console.log('[Delega IA] Iniciando cliente WhatsApp...');
   WA_STATUS = 'connecting';
 
   WA_CLIENT = new Client({
-    authStrategy: new LocalAuth({ clientId: 'delegaia' }),
+    authStrategy: new LocalAuth({ clientId: 'delegaia-server' }),
     puppeteer: {
       headless: true,
+      executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
       args: [
         '--no-sandbox',
         '--disable-setuid-sandbox',
@@ -52,239 +49,181 @@ function initWhatsApp() {
         '--no-first-run',
         '--no-zygote',
         '--single-process',
-        '--disable-gpu'
+        '--disable-gpu',
+        '--disable-extensions',
+        '--disable-background-networking',
+        '--disable-default-apps'
       ]
     }
   });
 
-  // Evento: QR generado
   WA_CLIENT.on('qr', async (qr) => {
-    console.log('📱 QR generado — listo para escanear');
+    console.log('[Delega IA] QR generado — listo para escanear');
     WA_STATUS = 'qr_ready';
     try {
       QR_IMAGE_URL = await qrcode.toDataURL(qr, {
-        width: 280,
-        margin: 2,
+        width: 280, margin: 2,
         color: { dark: '#128C7E', light: '#ffffff' }
       });
-      QR_DATA = qr;
-    } catch (err) {
-      console.error('Error generando QR imagen:', err.message);
-      QR_DATA = qr;
-    }
+    } catch (e) { console.error('Error QR:', e.message); }
   });
 
-  // Evento: Conectado
+  WA_CLIENT.on('authenticated', () => {
+    console.log('[Delega IA] Autenticado correctamente');
+    WA_STATUS = 'authenticated';
+  });
+
   WA_CLIENT.on('ready', () => {
-    console.log('✅ WhatsApp conectado exitosamente');
-    WA_STATUS = 'connected';
-    QR_DATA   = null;
-    const info = WA_CLIENT.info;
-    if (info) {
-      SESSIONS[info.wid.user] = {
-        name:        info.pushname,
-        phone:       info.wid.user,
-        status:      'connected',
-        connectedAt: new Date().toISOString()
-      };
-    }
+    console.log('[Delega IA] WhatsApp CONECTADO y listo');
+    WA_STATUS    = 'connected';
+    QR_IMAGE_URL = null;
+    const info   = WA_CLIENT.info;
+    SESSION_INFO = {
+      name:        info?.pushname || 'Docente',
+      phone:       info?.wid?.user || '',
+      connectedAt: new Date().toISOString()
+    };
   });
 
-  // Evento: Mensaje entrante
   WA_CLIENT.on('message', async (msg) => {
     if (msg.fromMe) return;
-    const from = msg.from.replace('@c.us', '');
+    const from = msg.from.replace('@c.us','');
     const text = msg.body || '';
-    console.log(`📩 Mensaje de ${from}: ${text.slice(0, 60)}...`);
-    await handleIncomingMessage(from, text, msg);
+    console.log(`[MSG] De ${from}: ${text.slice(0,80)}`);
+    await handleMessage(from, text);
   });
 
-  // Evento: Desconectado
   WA_CLIENT.on('disconnected', (reason) => {
-    console.log('🔴 WhatsApp desconectado:', reason);
-    WA_STATUS = 'disconnected';
-    QR_DATA   = null;
-    setTimeout(initWhatsApp, 8000); // reconectar en 8s
-  });
-
-  // Evento: Autenticado
-  WA_CLIENT.on('authenticated', () => {
-    console.log('🔐 Autenticación exitosa');
-    WA_STATUS = 'connecting';
+    console.log('[Delega IA] Desconectado:', reason);
+    WA_STATUS    = 'disconnected';
+    QR_IMAGE_URL = null;
+    SESSION_INFO = null;
+    setTimeout(initWhatsApp, 10000);
   });
 
   WA_CLIENT.initialize().catch(err => {
-    console.error('Error inicializando WhatsApp:', err.message);
+    console.error('[Delega IA] Error init:', err.message);
     WA_STATUS = 'error';
-    setTimeout(initWhatsApp, 15000);
+    setTimeout(initWhatsApp, 20000);
   });
 }
 
-// ─── Procesar mensajes entrantes ─────────────────────────
-async function handleIncomingMessage(from, text, msg) {
+// ─── Manejar mensajes entrantes ───────────────────────────
+async function handleMessage(from, text) {
   try {
-    // 1. Enviar al backend Deno de Base44
-    const response = await axios.post(
-      `${BASE44_API_URL}/chatDelega`,
-      {
-        action:     'send_message',
-        usuario_id: from,
-        empresa_id: BASE44_APP_ID,
-        mensaje:    text,
-        contexto:   `whatsapp|phone:${from}`
-      },
-      {
-        headers: { 'Content-Type': 'application/json' },
-        timeout: 10000
+    const res = await axios.post(`${BASE44_API_URL}/chatDelega`, {
+      action:     'send_message',
+      usuario_id: from,
+      empresa_id: BASE44_APP_ID,
+      mensaje:    text,
+      contexto:   `whatsapp|phone:${from}`
+    }, { timeout: 10000 });
+
+    const data = res.data;
+    if (data.success && data.message_id) {
+      const reply = await pollReply(data.message_id);
+      if (reply) {
+        await WA_CLIENT.sendMessage(`${from}@c.us`, reply);
+        return;
       }
-    );
-
-    const data = response.data;
-    if (!data.success || !data.message_id) {
-      await sendFallbackReply(from, text);
-      return;
     }
-
-    // 2. Polling de la respuesta del agente
-    const agentReply = await pollForReply(data.message_id, 20, 2500);
-
-    // 3. Enviar respuesta al usuario de WhatsApp
-    if (agentReply) {
-      await WA_CLIENT.sendMessage(`${from}@c.us`, agentReply);
-      console.log(`✅ Respuesta enviada a ${from}`);
-    } else {
-      await sendFallbackReply(from, text);
-    }
-
-  } catch (err) {
-    console.error('Error procesando mensaje:', err.message);
-    await sendFallbackReply(from, text);
+  } catch (e) {
+    console.warn('[Delega IA] Backend error:', e.message);
   }
+  await sendFallback(from, text);
 }
 
-// ─── Polling respuesta del agente ────────────────────────
-async function pollForReply(messageId, maxTries = 20, intervalMs = 2500) {
-  for (let i = 0; i < maxTries; i++) {
-    await sleep(intervalMs);
+async function pollReply(msgId, tries = 20, ms = 2500) {
+  for (let i = 0; i < tries; i++) {
+    await sleep(ms);
     try {
-      const res = await axios.post(
-        `${BASE44_API_URL}/chatDelega`,
-        { action: 'poll_response', last_id: messageId },
-        { headers: { 'Content-Type': 'application/json' }, timeout: 8000 }
+      const r = await axios.post(`${BASE44_API_URL}/chatDelega`,
+        { action: 'poll_response', last_id: msgId },
+        { timeout: 8000 }
       );
-      if (res.data.ready && res.data.respuesta) {
-        return res.data.respuesta;
-      }
-    } catch (e) {
-      console.warn(`Poll intento ${i + 1} fallido:`, e.message);
-    }
+      if (r.data.ready && r.data.respuesta) return r.data.respuesta;
+    } catch(e) {}
   }
   return null;
 }
 
-// ─── Respuesta de fallback ────────────────────────────────
-async function sendFallbackReply(from, text) {
-  if (!WA_CLIENT || WA_STATUS !== 'connected') return;
+async function sendFallback(from, text) {
+  if (WA_STATUS !== 'connected') return;
   const m = text.toLowerCase();
   let reply;
-  if (m.includes('hola') || m.includes('buenos') || m.includes('buenas')) {
-    reply = `¡Hola! 👋 Soy *Delega IA*, tu asistente docente.\n\nPuedo ayudarte con:\n📋 Planificaciones MINERD\n📊 Registro de asistencia\n📈 Calificaciones y boletines\n📝 Rúbricas de evaluación\n\n¿Con qué empezamos?`;
+  if (m.includes('hola') || m.includes('buenos') || m.includes('buenas') || m === 'hi') {
+    reply = `¡Hola! 👋 Soy *Delega IA*, tu asistente docente inteligente.\n\nPuedo ayudarte con:\n📋 *Planificaciones* MINERD\n📊 *Asistencia* automática\n📈 *Calificaciones* y boletines\n📝 *Rúbricas* de evaluación\n\n¿Con qué empezamos hoy?`;
   } else if (m.includes('planif') || m.includes('plan')) {
-    reply = `📋 Entendido! Voy a generar tu planificación.\n\nPor favor dime:\n1️⃣ Asignatura\n2️⃣ Grado y sección\n3️⃣ Período (diario/semanal/mensual)`;
-  } else if (m.includes('asistencia') || m.includes('falt')) {
-    reply = `📊 Para registrar asistencia, dime quiénes faltaron hoy.\n\nEjemplo: _"Hoy faltaron Juan Pérez y María López"_`;
-  } else if (m.includes('nota') || m.includes('calificac')) {
-    reply = `📈 Para registrar calificaciones envíame:\n\nNombre del estudiante y su nota.\n\nEjemplo: _"Ana García 95, Carlos López 78"_`;
+    reply = `📋 ¡Perfecto! Voy a generar tu planificación.\n\nIndícame:\n1️⃣ Asignatura\n2️⃣ Grado y sección\n3️⃣ Período (diario / semanal / mensual)`;
+  } else if (m.includes('asistencia') || m.includes('falt') || m.includes('ausent')) {
+    reply = `📊 Para registrar asistencia, dime quiénes faltaron.\n\nEjemplo: _"Hoy faltaron Juan Pérez y María López"_`;
+  } else if (m.includes('nota') || m.includes('calificac') || m.includes('promedio')) {
+    reply = `📈 Envíame las calificaciones así:\n\n_"Ana García 95, Carlos López 78, María Pérez 88"_\n\nY las registro automáticamente.`;
+  } else if (m.includes('rúbrica') || m.includes('rubrica')) {
+    reply = `📝 Creando tu rúbrica...\n\nIndícame el tema o actividad a evaluar.`;
   } else {
-    reply = `🤖 Tu mensaje fue recibido y está siendo procesado por *Delega IA*.\n\nEn unos segundos recibirás una respuesta. Si no recibes respuesta, escribe *hola* para reiniciar.`;
+    reply = `🤖 Tu mensaje fue recibido por *Delega IA*.\n\nEstoy procesando tu solicitud...\n\nEscribe *hola* para ver todo lo que puedo hacer por ti.`;
   }
-  await WA_CLIENT.sendMessage(`${from}@c.us`, reply);
+  try { await WA_CLIENT.sendMessage(`${from}@c.us`, reply); } catch(e) {}
 }
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
-// ─────────────────────────────────────────────────────────
-// API ENDPOINTS
-// ─────────────────────────────────────────────────────────
-
-// Health check
+// ─── API ENDPOINTS ────────────────────────────────────────
 app.get('/health', (req, res) => {
   res.json({
-    status:    'ok',
-    service:   'Delega IA WhatsApp Server',
-    wa_status: WA_STATUS,
-    uptime:    Math.floor(process.uptime()),
-    sessions:  Object.keys(SESSIONS).length,
+    ok:        true,
+    status:    WA_STATUS,
+    uptime:    Math.floor((Date.now() - UPTIME_START) / 1000),
+    session:   SESSION_INFO,
     version:   '1.0.0',
     timestamp: new Date().toISOString()
   });
 });
 
-// Estado del QR
-app.get('/api/qr/status', (req, res) => {
+app.get('/api/status', (req, res) => {
   res.json({
-    status:    WA_STATUS,
-    has_qr:    !!QR_DATA,
-    qr_image:  QR_IMAGE_URL,
-    sessions:  Object.values(SESSIONS)
+    status:   WA_STATUS,
+    qr:       QR_IMAGE_URL,
+    session:  SESSION_INFO,
+    uptime:   Math.floor((Date.now() - UPTIME_START) / 1000)
   });
 });
 
-// Obtener QR como imagen base64
-app.get('/api/qr/image', (req, res) => {
-  if (!QR_IMAGE_URL) {
-    return res.json({ success: false, message: 'QR no disponible aún. Estado: ' + WA_STATUS });
-  }
-  res.json({ success: true, qr_image: QR_IMAGE_URL, status: WA_STATUS });
-});
-
-// Regenerar QR (desconectar y reconectar)
-app.post('/api/qr/refresh', async (req, res) => {
-  console.log('🔄 Solicitando nuevo QR...');
+app.post('/api/refresh', async (req, res) => {
+  console.log('[Delega IA] Solicitando nuevo QR...');
   if (WA_CLIENT) {
-    try { await WA_CLIENT.destroy(); } catch (e) {}
+    try { await WA_CLIENT.destroy(); } catch(e) {}
+    WA_CLIENT = null;
   }
-  QR_DATA      = null;
-  QR_IMAGE_URL = null;
   WA_STATUS    = 'connecting';
+  QR_IMAGE_URL = null;
+  SESSION_INFO = null;
   setTimeout(initWhatsApp, 2000);
-  res.json({ success: true, message: 'Reconectando... El QR estará listo en 15 segundos.' });
+  res.json({ ok: true, message: 'Reconectando... QR listo en ~20 segundos.' });
 });
 
-// Enviar mensaje (uso interno/admin)
 app.post('/api/send', async (req, res) => {
-  const { phone, message, adminKey } = req.body;
-  if (adminKey !== process.env.ADMIN_KEY) {
-    return res.status(401).json({ error: 'No autorizado' });
-  }
-  if (WA_STATUS !== 'connected') {
-    return res.status(503).json({ error: 'WhatsApp no conectado. Estado: ' + WA_STATUS });
-  }
-  if (!phone || !message) {
-    return res.status(400).json({ error: 'Faltan phone y message' });
-  }
+  const { phone, message, key } = req.body;
+  if (key !== process.env.ADMIN_KEY) return res.status(401).json({ error: 'No autorizado' });
+  if (WA_STATUS !== 'connected') return res.status(503).json({ error: 'WhatsApp no conectado' });
+  if (!phone || !message) return res.status(400).json({ error: 'Faltan phone y message' });
   try {
     await WA_CLIENT.sendMessage(`${phone}@c.us`, message);
-    res.json({ success: true });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+    res.json({ ok: true });
+  } catch(e) { res.status(500).json({ error: e.message }); }
 });
 
-// Dashboard QR — sirve la página HTML
-app.get('/', (req, res) => {
+app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// ─── Iniciar servidor ─────────────────────────────────────
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`\n🚀 Delega IA Server corriendo en puerto ${PORT}`);
-  console.log(`📡 Health: http://localhost:${PORT}/health`);
-  console.log(`📱 QR API: http://localhost:${PORT}/api/qr/status`);
-  console.log(`🌐 Dashboard: http://localhost:${PORT}\n`);
+  console.log(`📡 Health: /health`);
+  console.log(`📱 Status: /api/status\n`);
   initWhatsApp();
 });
 
-process.on('unhandledRejection', (reason) => {
-  console.error('Unhandled rejection:', reason);
-});
+process.on('unhandledRejection', r => console.error('Unhandled:', r));
+process.on('uncaughtException',  e => console.error('Uncaught:', e.message));
