@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: delegaia-whatsapp
+    env: node
+    region: oregon
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: PORT
+        value: 3000
+      - key: BASE44_APP_ID
+        value: 69bf571e53cddb8789552b4e
+      - key: NODE_ENV
+        value: production
+      - key: ADMIN_KEY
+        generateValue: true
+    healthCheckPath: /health
+    autoDeploy: true
