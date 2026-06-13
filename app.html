@@ -616,7 +616,7 @@ function nextStep(to){
   document.getElementById('dot-'+to).classList.remove('done');
   document.getElementById('dot-'+to).classList.add('active');
 }
-async function doLogin(){
+async async function doLogin(){
   const email=document.getElementById('login-email').value.trim();
   if(!email)return showErr('Ingresa tu correo');
   const btn=document.getElementById('btn-login');
@@ -625,7 +625,7 @@ async function doLogin(){
   catch{showErr('Error de conexión');}
   finally{btn.disabled=false;btn.innerHTML='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg> Entrar a mi cuenta';}
 }
-async function doRegistro(){
+async async function doRegistro(){
   const nombre=document.getElementById('reg-nombre').value.trim(),email=document.getElementById('reg-email').value.trim(),
     nivel=document.getElementById('reg-nivel').value,grado=document.getElementById('reg-grado').value.trim(),
     materia=document.getElementById('reg-materia').value.trim(),centro=document.getElementById('reg-centro').value.trim(),
@@ -666,7 +666,7 @@ function initApp(){
 }
 
 // DASHBOARD
-async function loadDashboard(){
+async async function loadDashboard(){
   try{const r=await callDeno({action:'dashboard',token:SESSION.token});if(!r.ok)return;
     document.getElementById('st-total').textContent=r.stats.total;
     document.getElementById('st-comp').textContent=r.stats.completadas;
@@ -679,7 +679,7 @@ function renderRecientes(t){
   if(!t.length){el.innerHTML=`<div class="empty-state"><div class="empty-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div class="empty-title">Sin tareas aún</div><div class="empty-sub">Ve a Delegar para crear la primera</div></div>`;return;}
   el.innerHTML=t.map(x=>tareaHTML(x)).join('');
 }
-async function cargarTareas(){
+async async function cargarTareas(){
   try{const r=await callDeno({action:'mis_tareas',token:SESSION.token});if(!r.ok)return;
     const el=document.getElementById('tareas-list');
     if(!r.tareas.length){el.innerHTML=`<div class="empty-state"><div class="empty-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div><div class="empty-title">Sin tareas</div><div class="empty-sub">Delega tu primera tarea</div></div>`;return;}
@@ -702,7 +702,7 @@ function tareaHTML(t){
   return `<div class="tarea-item" onclick="verTarea('${t.id}')"><div class="tarea-ico ${TCLS[t.tipo]||'t-otro'}">${TICONS[t.tipo]||TICONS.consulta}</div><div style="flex:1;min-width:0"><div class="tarea-titulo">${t.titulo||'Sin título'}</div><div class="tarea-desc">${t.descripcion||''}</div><div class="tarea-meta"><span class="badge ${t.estado}">${EL[t.estado]||t.estado}</span><span class="tarea-fecha">${f}</span></div></div></div>`;
 }
 
-async function verTarea(id){
+async async function verTarea(id){
   document.getElementById('modal-tarea').classList.add('open');
   document.getElementById('modal-titulo').textContent='...';
   document.getElementById('modal-resultado-wrap').style.display='none';
@@ -720,7 +720,7 @@ async function verTarea(id){
     else if(t.resultado){document.getElementById('modal-resultado-wrap').style.display='block';document.getElementById('modal-resultado').textContent=t.resultado;}
   }catch{}
 }
-async function pollTarea(id,n=0){
+async async function pollTarea(id,n=0){
   if(n>24)return;await sleep(2500);
   try{const r=await callDeno({action:'poll',tarea_id:id});
     if(r.listo){document.getElementById('modal-procesando').style.display='none';
@@ -731,7 +731,7 @@ function closeModal(){document.getElementById('modal-tarea').classList.remove('o
 
 // DELEGAR
 function selTipo(t){TIPO_SEL=t;document.querySelectorAll('.tipo-btn').forEach(b=>b.classList.toggle('selected',b.dataset.tipo===t));}
-async function crearTarea(){
+async async function crearTarea(){
   const titulo=document.getElementById('t-titulo').value.trim(),desc=document.getElementById('t-desc').value.trim();
   if(!titulo)return toast('⚠️ Ingresa un título');if(!desc)return toast('⚠️ Describe lo que necesitas');
   const btn=document.getElementById('btn-delegar');btn.disabled=true;btn.innerHTML='<span class="spinner"></span> Delegando...';
@@ -775,7 +775,7 @@ function addTyping(){
   msgs.appendChild(div);msgs.scrollTop=msgs.scrollHeight;return div;
 }
 
-async function sendChat(){
+async async function sendChat(){
   if(CHAT_BUSY)return;
   const inp=document.getElementById('chat-input'),txt=inp.value.trim();if(!txt)return;
   document.getElementById('chat-chips').style.display='none';
@@ -810,14 +810,14 @@ async function sendChat(){
   CHAT_BUSY=false;
 }
 
-async function chatFallback(txt){
+async async function chatFallback(txt){
   try{
     const r=await callDeno({action:'crear_tarea',token:SESSION?.token,titulo:txt.slice(0,60),descripcion:txt,tipo:'consulta',prioridad:'alta'});
     if(r.ok&&r.tarea_id){const resp=await pollReply(r.tarea_id);addBubble('agent',resp||'✅ Tarea registrada. Revisa la pestaña Tareas.');}
     else addBubble('agent','⚠️ No pude procesar. Intenta de nuevo.');
   }catch{addBubble('agent','⚠️ Error de conexión.');}
 }
-async function pollReply(id,tries=20,ms=2200){
+async async function pollReply(id,tries=20,ms=2200){
   for(let i=0;i<tries;i++){await sleep(ms);try{const r=await callDeno({action:'poll',tarea_id:id});if(r.listo&&r.resultado)return r.resultado;}catch{}}
   return null;
 }
