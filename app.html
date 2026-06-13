@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
+<meta name="theme-color" content="#25D366">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Delega IA — Tu Asistente Docente</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
+:root{
+  --p:#25D366;--pd:#128C7E;--pl:#e8f5e9;--pl2:#d1fae5;
+  --bg:#f7faf8;--card:#fff;--on:#111827;--on2:#4b5563;--on3:#9ca3af;
+  --border:#e5e7eb;--r:16px;--shadow:0 4px 24px rgba(0,0,0,.08);
+}
+html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:var(--on);overflow:hidden}
+
+/* ── SCREENS ────────────────────────────────────────────── */
+.screen{position:fixed;inset:0;display:none;flex-direction:column;overflow:hidden}
+.screen.active{display:flex}
+
+/* ── AUTH SCREEN ────────────────────────────────────────── */
+#s-auth{background:linear-gradient(160deg,#fff 0%,#f0fbf5 60%,#e8f5e9 100%);align-items:center;justify-content:center;padding:20px}
+.auth-card{background:#fff;border-radius:28px;padding:36px 28px;width:100%;max-width:400px;box-shadow:0 20px 60px rgba(37,211,102,.1),0 4px 20px rgba(0,0,0,.05);border:1px solid rgba(37,211,102,.12)}
+.auth-logo{display:flex;align-items:center;gap:12px;margin-bottom:28px;justify-content:center}
+.auth-logo-mark{width:48px;height:48px;background:var(--p);border-radius:14px;display:flex;align-items:center;justify-content:center}
+.auth-logo-mark svg{width:26px;height:26px;color:#fff}
+.auth-logo-name{font-size:24px;font-weight:900;letter-spacing:-.5px}
+.auth-logo-name span{color:var(--p)}
+.auth-tabs{display:flex;background:var(--bg);border-radius:12px;padding:4px;margin-bottom:24px}
+.auth-tab{flex:1;padding:9px;border:none;background:none;border-radius:10px;font-size:13px;font-weight:600;color:var(--on3);cursor:pointer;transition:all .2s}
+.auth-tab.active{background:#fff;color:var(--on);box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.auth-title{font-size:20px;font-weight:800;margin-bottom:6px}
+.auth-sub{font-size:13px;color:var(--on2);margin-bottom:20px;line-height:1.5}
+.form-group{margin-bottom:14px}
+.form-label{font-size:12px;font-weight:700;color:var(--on2);margin-bottom:6px;display:block;text-transform:uppercase;letter-spacing:.4px}
+.form-input{width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:12px;font-size:14px;font-family:inherit;color:var(--on);background:#fff;transition:all .2s;outline:none}
+.form-input:focus{border-color:var(--p);box-shadow:0 0 0 3px rgba(37,211,102,.1)}
+.form-select{width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:12px;font-size:14px;font-family:inherit;color:var(--on);background:#fff;transition:all .2s;outline:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239ca3af' stroke-width='2' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center}
+.form-select:focus{border-color:var(--p)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn-primary{width:100%;padding:14px;border-radius:50px;background:var(--p);color:#fff;border:none;font-size:15px;font-weight:700;cursor:pointer;transition:all .25s;margin-top:4px}
+.btn-primary:hover{background:var(--pd);transform:translateY(-1px);box-shadow:0 6px 20px rgba(37,211,102,.35)}
+.btn-primary:disabled{background:var(--border);color:var(--on3);cursor:not-allowed;transform:none;box-shadow:none}
+.form-step{display:none}.form-step.active{display:block}
+.step-indicators{display:flex;gap:6px;justify-content:center;margin-bottom:20px}
+.step-dot{width:8px;height:8px;border-radius:50%;background:var(--border);transition:all .3s}
+.step-dot.active{background:var(--p);width:20px;border-radius:4px}
+.step-dot.done{background:var(--pd)}
+.auth-footer{text-align:center;margin-top:14px;font-size:12px;color:var(--on3)}
+.auth-footer a{color:var(--p);font-weight:600;cursor:pointer;text-decoration:none}
+.error-msg{background:#fee2e2;color:#b91c1c;padding:10px 14px;border-radius:10px;font-size:13px;margin-bottom:12px;display:none}
+
+/* ── APP SHELL ───────────────────────────────────────────── */
+#s-app{flex-direction:column}
+.app-header{background:#fff;border-bottom:1px solid var(--border);padding:0 16px;height:56px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;position:relative;z-index:10}
+.header-logo{display:flex;align-items:center;gap:8px}
+.header-lm{width:32px;height:32px;background:var(--p);border-radius:9px;display:flex;align-items:center;justify-content:center}
+.header-lm svg{width:17px;height:17px;color:#fff}
+.header-name{font-size:16px;font-weight:800}
+.header-name span{color:var(--p)}
+.header-right{display:flex;align-items:center;gap:10px}
+.avatar{width:34px;height:34px;border-radius:50%;background:var(--pl);border:2px solid var(--p);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--pd);cursor:pointer}
+.notif-btn{width:34px;height:34px;border-radius:50%;background:var(--bg);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative}
+.notif-btn svg{width:18px;height:18px;color:var(--on2)}
+
+/* ── TAB BAR ─────────────────────────────────────────────── */
+.tab-bar{background:#fff;border-top:1px solid var(--border);display:flex;padding:8px 0 calc(8px + env(safe-area-inset-bottom));flex-shrink:0}
+.tab-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 0;cursor:pointer;transition:all .2s;border:none;background:none}
+.tab-icon{width:24px;height:24px;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.tab-icon svg{width:22px;height:22px;color:var(--on3);transition:all .2s}
+.tab-label{font-size:10px;font-weight:600;color:var(--on3);transition:all .2s}
+.tab-item.active .tab-icon svg{color:var(--p)}
+.tab-item.active .tab-label{color:var(--p)}
+
+/* ── CONTENT ─────────────────────────────────────────────── */
+.app-content{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
+.tab-page{display:none;padding:16px;animation:fadeIn .2s ease}
+.tab-page.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── CARDS ───────────────────────────────────────────────── */
+.card{background:var(--card);border-radius:var(--r);padding:16px;box-shadow:var(--shadow);border:1px solid var(--border);margin-bottom:12px}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.card-title{font-size:14px;font-weight:700;color:var(--on)}
+.section-title{font-size:16px;font-weight:800;margin-bottom:12px;color:var(--on)}
+
+/* ── STATS GRID ──────────────────────────────────────────── */
+.stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px}
+.stat-card{background:#fff;border-radius:16px;padding:16px;box-shadow:var(--shadow);border:1px solid var(--border);text-align:center}
+.stat-num{font-size:28px;font-weight:900;color:var(--p);line-height:1}
+.stat-lbl{font-size:11px;font-weight:600;color:var(--on3);text-transform:uppercase;letter-spacing:.4px;margin-top:4px}
+
+/* ── WELCOME BANNER ──────────────────────────────────────── */
+.welcome-banner{background:linear-gradient(135deg,var(--pd) 0%,var(--p) 100%);border-radius:20px;padding:20px;color:#fff;margin-bottom:16px;position:relative;overflow:hidden}
+.welcome-banner::after{content:'';position:absolute;top:-20px;right:-20px;width:100px;height:100px;background:rgba(255,255,255,.08);border-radius:50%}
+.welcome-banner::before{content:'';position:absolute;bottom:-30px;right:30px;width:80px;height:80px;background:rgba(255,255,255,.05);border-radius:50%}
+.wb-greeting{font-size:12px;opacity:.85;font-weight:500;margin-bottom:4px}
+.wb-name{font-size:20px;font-weight:800;margin-bottom:4px}
+.wb-sub{font-size:12px;opacity:.75;line-height:1.4}
+
+/* ── TAREA ITEMS ─────────────────────────────────────────── */
+.tarea-item{display:flex;align-items:flex-start;gap:12px;padding:14px;background:#fff;border-radius:14px;border:1px solid var(--border);margin-bottom:8px;cursor:pointer;transition:all .2s;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.tarea-item:hover{border-color:var(--p);background:var(--pl)}
+.tarea-ico{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:17px}
+.tarea-ico.planificacion{background:#e8f5e9}
+.tarea-ico.asistencia{background:#dbeafe}
+.tarea-ico.calificacion{background:#fef3c7}
+.tarea-ico.rubrica{background:#f3e8ff}
+.tarea-ico.consulta{background:#f0fdf4}
+.tarea-ico.otro{background:#f3f4f6}
+.tarea-body{flex:1;min-width:0}
+.tarea-titulo{font-size:13px;font-weight:700;color:var(--on);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tarea-desc{font-size:12px;color:var(--on3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:6px}
+.tarea-meta{display:flex;align-items:center;gap:6px}
+.badge{display:inline-flex;align-items:center;gap:3px;padding:3px 8px;border-radius:20px;font-size:10px;font-weight:700}
+.badge.pendiente{background:#fef3c7;color:#92400e}
+.badge.procesando{background:#dbeafe;color:#1d4ed8;animation:blink 1.5s infinite}
+.badge.completada{background:#d1fae5;color:#065f46}
+.badge.error{background:#fee2e2;color:#b91c1c}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.6}}
+.tarea-fecha{font-size:10px;color:var(--on3)}
+
+/* ── NUEVA TAREA ─────────────────────────────────────────── */
+.tipos-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
+.tipo-btn{display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 8px;background:#fff;border:1.5px solid var(--border);border-radius:14px;cursor:pointer;transition:all .2s;font-size:11px;font-weight:700;color:var(--on2)}
+.tipo-btn:hover,.tipo-btn.selected{border-color:var(--p);background:var(--pl);color:var(--pd)}
+.tipo-emoji{font-size:22px}
+.btn-outline{width:100%;padding:12px;border-radius:50px;background:#fff;color:var(--pd);border:1.5px solid var(--p);font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;margin-top:8px}
+.btn-outline:hover{background:var(--pl)}
+
+/* ── CHAT ────────────────────────────────────────────────── */
+#page-chat{display:none;flex-direction:column;height:100%;padding:0}
+#page-chat.active{display:flex}
+.chat-msgs{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px}
+.msg{max-width:82%;display:flex;flex-direction:column;gap:3px}
+.msg.user{align-self:flex-end;align-items:flex-end}
+.msg.agent{align-self:flex-start;align-items:flex-start}
+.msg-bubble{padding:11px 14px;border-radius:18px;font-size:14px;line-height:1.5;word-break:break-word;white-space:pre-wrap}
+.msg.user .msg-bubble{background:var(--p);color:#fff;border-radius:18px 18px 4px 18px}
+.msg.agent .msg-bubble{background:#fff;color:var(--on);border:1px solid var(--border);border-radius:18px 18px 18px 4px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.msg-time{font-size:10px;color:var(--on3);padding:0 4px}
+.chat-input-bar{padding:12px 16px;background:#fff;border-top:1px solid var(--border);display:flex;align-items:flex-end;gap:10px}
+.chat-textarea{flex:1;padding:11px 14px;border:1.5px solid var(--border);border-radius:22px;font-size:14px;font-family:inherit;resize:none;outline:none;max-height:100px;line-height:1.4;transition:border .2s}
+.chat-textarea:focus{border-color:var(--p)}
+.chat-send{width:42px;height:42px;border-radius:50%;background:var(--p);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:all .2s}
+.chat-send:hover{background:var(--pd)}
+.chat-send svg{width:18px;height:18px;color:#fff}
+.typing-dots{display:flex;gap:4px;padding:12px 16px;align-items:center}
+.typing-dots span{width:8px;height:8px;border-radius:50%;background:var(--on3);animation:td .8s ease infinite}
+.typing-dots span:nth-child(2){animation-delay:.15s}
+.typing-dots span:nth-child(3){animation-delay:.3s}
+@keyframes td{0%,80%,100%{transform:scale(0.6);opacity:.4}40%{transform:scale(1);opacity:1}}
+.chat-chips{display:flex;gap:8px;padding:10px 16px 0;overflow-x:auto;-ms-overflow-style:none;scrollbar-width:none}
+.chat-chips::-webkit-scrollbar{display:none}
+.chip{padding:7px 14px;background:#fff;border:1.5px solid var(--border);border-radius:20px;font-size:12px;font-weight:600;color:var(--on2);white-space:nowrap;cursor:pointer;flex-shrink:0;transition:all .2s}
+.chip:hover{border-color:var(--p);background:var(--pl);color:var(--pd)}
+
+/* ── PERFIL ──────────────────────────────────────────────── */
+.profile-banner{background:linear-gradient(135deg,var(--pd),var(--p));border-radius:20px;padding:24px;color:#fff;text-align:center;margin-bottom:16px}
+.profile-avatar{width:64px;height:64px;border-radius:50%;background:rgba(255,255,255,.2);border:3px solid rgba(255,255,255,.5);display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;margin:0 auto 12px}
+.profile-name{font-size:18px;font-weight:800}
+.profile-email{font-size:13px;opacity:.8;margin-top:2px}
+.info-row{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--border)}
+.info-row:last-child{border-bottom:none}
+.info-label{font-size:12px;font-weight:700;color:var(--on3);text-transform:uppercase;letter-spacing:.4px}
+.info-val{font-size:14px;font-weight:600;color:var(--on)}
+.logout-btn{width:100%;padding:13px;border-radius:50px;background:#fee2e2;color:#b91c1c;border:none;font-size:14px;font-weight:700;cursor:pointer;margin-top:16px;transition:all .2s}
+.logout-btn:hover{background:#fecaca}
+
+/* ── MODAL ───────────────────────────────────────────────── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(6px);z-index:200;display:none;align-items:flex-end;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:#fff;border-radius:24px 24px 0 0;width:100%;max-width:500px;max-height:88vh;overflow-y:auto;animation:slideUp .3s cubic-bezier(.34,1.56,.64,1)}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.modal-handle{width:40px;height:4px;background:var(--border);border-radius:2px;margin:12px auto 0}
+.modal-header{padding:16px 20px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.modal-title{font-size:16px;font-weight:800}
+.modal-close{width:28px;height:28px;border-radius:50%;background:var(--bg);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--on2)}
+.modal-body{padding:20px}
+.resultado-content{background:var(--bg);border-radius:14px;padding:16px;font-size:14px;line-height:1.7;color:var(--on);white-space:pre-wrap;word-break:break-word;max-height:300px;overflow-y:auto}
+
+/* ── EMPTY STATE ─────────────────────────────────────────── */
+.empty-state{text-align:center;padding:40px 20px}
+.empty-icon{font-size:48px;margin-bottom:12px}
+.empty-title{font-size:16px;font-weight:700;margin-bottom:6px}
+.empty-sub{font-size:13px;color:var(--on3);line-height:1.5}
+
+/* ── LOADING ─────────────────────────────────────────────── */
+.spinner{width:20px;height:20px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite;display:inline-block}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── TOAST ───────────────────────────────────────────────── */
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--on);color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;font-weight:600;z-index:500;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+
+<!-- AUTH SCREEN -->
+<div class="screen active" id="s-auth">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <div class="auth-logo-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
+      <div class="auth-logo-name">Delega <span>IA</span></div>
+    </div>
+    <div class="auth-tabs">
+      <button class="auth-tab active" onclick="switchTab('login')">Entrar</button>
+      <button class="auth-tab" onclick="switchTab('registro')">Registrarse</button>
+    </div>
+    <div id="error-msg" class="error-msg"></div>
+
+    <!-- LOGIN -->
+    <div id="tab-login">
+      <div class="auth-title">Bienvenido de vuelta</div>
+      <p class="auth-sub">Ingresa tu correo para continuar</p>
+      <div class="form-group">
+        <label class="form-label">Correo electrónico</label>
+        <input type="email" class="form-input" id="login-email" placeholder="tu@email.com" autocomplete="email">
+      </div>
+      <button class="btn-primary" id="btn-login" onclick="doLogin()">Entrar a mi cuenta</button>
+      <div class="auth-footer">¿No tienes cuenta? <a onclick="switchTab('registro')">Regístrate gratis</a></div>
+    </div>
+
+    <!-- REGISTRO -->
+    <div id="tab-registro" style="display:none">
+      <div class="step-indicators">
+        <div class="step-dot active" id="dot-0"></div>
+        <div class="step-dot" id="dot-1"></div>
+        <div class="step-dot" id="dot-2"></div>
+      </div>
+
+      <!-- Step 1 -->
+      <div class="form-step active" id="step-0">
+        <div class="auth-title">Paso 1 de 3</div>
+        <p class="auth-sub">Tus datos personales</p>
+        <div class="form-group">
+          <label class="form-label">Nombre completo</label>
+          <input type="text" class="form-input" id="reg-nombre" placeholder="Ej: María González">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Correo electrónico</label>
+          <input type="email" class="form-input" id="reg-email" placeholder="tu@email.com">
+        </div>
+        <button class="btn-primary" onclick="nextStep(1)">Continuar →</button>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="form-step" id="step-1">
+        <div class="auth-title">Paso 2 de 3</div>
+        <p class="auth-sub">Tu información docente</p>
+        <div class="form-group">
+          <label class="form-label">Nivel educativo</label>
+          <select class="form-select" id="reg-nivel">
+            <option value="">Seleccionar...</option>
+            <option>Inicial</option><option>Primario</option><option>Secundario</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Grado / Sección</label>
+            <input type="text" class="form-input" id="reg-grado" placeholder="Ej: 4to A">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Asignatura</label>
+            <input type="text" class="form-input" id="reg-materia" placeholder="Ej: Matemáticas">
+          </div>
+        </div>
+        <button class="btn-primary" onclick="nextStep(2)">Continuar →</button>
+        <button class="btn-outline" onclick="nextStep(0)" style="margin-top:6px">← Atrás</button>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="form-step" id="step-2">
+        <div class="auth-title">Paso 3 de 3</div>
+        <p class="auth-sub">Tu centro educativo</p>
+        <div class="form-group">
+          <label class="form-label">Nombre del centro</label>
+          <input type="text" class="form-input" id="reg-centro" placeholder="Ej: Escuela Básica Salomé Ureña">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Regional educativa</label>
+          <select class="form-select" id="reg-regional">
+            <option value="">Seleccionar...</option>
+            <option>Regional 01 — Santo Domingo</option><option>Regional 02 — Santiago</option>
+            <option>Regional 03 — La Vega</option><option>Regional 04 — San Pedro de Macorís</option>
+            <option>Regional 05 — La Romana</option><option>Regional 06 — San Juan</option>
+            <option>Regional 07 — Azua</option><option>Regional 08 — Barahona</option>
+            <option>Regional 09 — Mao-Valverde</option><option>Regional 10 — Moca</option>
+            <option>Regional 11 — Higuey</option><option>Regional 12 — Nagua</option>
+            <option>Regional 13 — Monte Cristi</option><option>Regional 14 — Baní</option>
+            <option>Regional 15 — Cotuí</option><option>Regional 16 — Comendador</option>
+            <option>Regional 17 — El Seibo</option><option>Regional 18 — Dajabón</option>
+          </select>
+        </div>
+        <button class="btn-primary" id="btn-registro" onclick="doRegistro()">Crear mi cuenta ✓</button>
+        <button class="btn-outline" onclick="nextStep(1)" style="margin-top:6px">← Atrás</button>
+      </div>
+      <div class="auth-footer">¿Ya tienes cuenta? <a onclick="switchTab('login')">Iniciar sesión</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- APP SCREEN -->
+<div class="screen" id="s-app">
+  <!-- Header -->
+  <div class="app-header">
+    <div class="header-logo">
+      <div class="header-lm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
+      <span class="header-name">Delega <span>IA</span></span>
+    </div>
+    <div class="header-right">
+      <div class="notif-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div>
+      <div class="avatar" id="user-avatar" onclick="goTab('perfil')">D</div>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="app-content">
+    <!-- INICIO -->
+    <div class="tab-page active" id="page-inicio">
+      <div class="welcome-banner">
+        <div class="wb-greeting">Buenos días, docente 👋</div>
+        <div class="wb-name" id="wb-name">Cargando...</div>
+        <div class="wb-sub" id="wb-sub">Delega IA está listo para ayudarte</div>
+      </div>
+      <div class="stats-grid" id="stats-grid">
+        <div class="stat-card"><div class="stat-num" id="st-total">--</div><div class="stat-lbl">Tareas totales</div></div>
+        <div class="stat-card"><div class="stat-num" id="st-comp">--</div><div class="stat-lbl">Completadas</div></div>
+        <div class="stat-card"><div class="stat-num" id="st-pend">--</div><div class="stat-lbl">Pendientes</div></div>
+        <div class="stat-card"><div class="stat-num" id="st-proc">--</div><div class="stat-lbl">Procesando</div></div>
+      </div>
+      <div class="section-title">Tareas recientes</div>
+      <div id="tareas-recientes">
+        <div class="empty-state"><div class="empty-icon">📋</div><div class="empty-title">Sin tareas aún</div><div class="empty-sub">Crea tu primera tarea en la pestaña Delegar</div></div>
+      </div>
+    </div>
+
+    <!-- DELEGAR -->
+    <div class="tab-page" id="page-delegar">
+      <div class="section-title">¿Qué deseas delegar?</div>
+      <div class="tipos-grid">
+        <div class="tipo-btn" onclick="selTipo('planificacion')" data-tipo="planificacion"><span class="tipo-emoji">📋</span>Planificación</div>
+        <div class="tipo-btn" onclick="selTipo('asistencia')" data-tipo="asistencia"><span class="tipo-emoji">✅</span>Asistencia</div>
+        <div class="tipo-btn" onclick="selTipo('calificacion')" data-tipo="calificacion"><span class="tipo-emoji">📊</span>Calificaciones</div>
+        <div class="tipo-btn" onclick="selTipo('rubrica')" data-tipo="rubrica"><span class="tipo-emoji">📝</span>Rúbrica</div>
+        <div class="tipo-btn" onclick="selTipo('comunicado')" data-tipo="comunicado"><span class="tipo-emoji">📣</span>Comunicado</div>
+        <div class="tipo-btn" onclick="selTipo('otro')" data-tipo="otro"><span class="tipo-emoji">💬</span>Otro</div>
+      </div>
+      <div class="card">
+        <div class="form-group">
+          <label class="form-label">Título de la tarea</label>
+          <input type="text" class="form-input" id="t-titulo" placeholder="Ej: Plan mensual de Matemáticas Junio">
+        </div>
+        <div class="form-group" style="margin-bottom:0">
+          <label class="form-label">Descripción detallada</label>
+          <textarea class="form-input" id="t-desc" rows="4" placeholder="Describe exactamente lo que necesitas. Entre más detalles, mejor resultado..." style="resize:none;line-height:1.5"></textarea>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Prioridad</label>
+        <select class="form-select" id="t-prioridad">
+          <option value="media">⚡ Media</option>
+          <option value="alta">🔴 Alta</option>
+          <option value="baja">🟢 Baja</option>
+        </select>
+      </div>
+      <button class="btn-primary" id="btn-delegar" onclick="crearTarea()">
+        Delegar a Andrea ✨
+      </button>
+    </div>
+
+    <!-- MIS TAREAS -->
+    <div class="tab-page" id="page-tareas">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+        <div class="section-title" style="margin-bottom:0">Mis tareas</div>
+        <button onclick="cargarTareas()" style="padding:7px 14px;border-radius:20px;background:var(--pl);color:var(--pd);border:none;font-size:12px;font-weight:700;cursor:pointer">↻ Actualizar</button>
+      </div>
+      <div id="tareas-list">
+        <div class="empty-state"><div class="empty-icon">📬</div><div class="empty-title">Sin tareas</div><div class="empty-sub">Delega tu primera tarea y aparecerá aquí</div></div>
+      </div>
+    </div>
+
+    <!-- CHAT -->
+    <div class="tab-page" id="page-chat" style="padding:0;display:none;flex-direction:column">
+      <div class="chat-chips" id="chat-chips">
+        <div class="chip" onclick="chipClick('Genera un plan mensual de Matemáticas para 4to')">📋 Plan mensual</div>
+        <div class="chip" onclick="chipClick('Crea una rúbrica de evaluación para exposición oral')">📝 Rúbrica</div>
+        <div class="chip" onclick="chipClick('Registra la asistencia de hoy')">✅ Asistencia</div>
+        <div class="chip" onclick="chipClick('Genera un comunicado para los padres')">📣 Comunicado</div>
+        <div class="chip" onclick="chipClick('Ayúdame con las calificaciones del trimestre')">📊 Calificaciones</div>
+      </div>
+      <div class="chat-msgs" id="chat-msgs">
+        <div class="msg agent">
+          <div class="msg-bubble">¡Hola! 👋 Soy *Andrea*, tu asistente docente de Delega IA.\n\nPuedo ayudarte con planificaciones, rúbricas, asistencia, calificaciones y mucho más. ¿Por dónde empezamos?</div>
+          <div class="msg-time">Ahora</div>
+        </div>
+      </div>
+      <div class="chat-input-bar">
+        <textarea class="chat-textarea" id="chat-input" rows="1" placeholder="Escribe tu tarea aquí..." oninput="autoGrow(this)" onkeydown="chatKey(event)"></textarea>
+        <button class="chat-send" onclick="sendChat()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+      </div>
+    </div>
+
+    <!-- PERFIL -->
+    <div class="tab-page" id="page-perfil">
+      <div class="profile-banner">
+        <div class="profile-avatar" id="p-avatar">D</div>
+        <div class="profile-name" id="p-nombre">Cargando...</div>
+        <div class="profile-email" id="p-email"></div>
+      </div>
+      <div class="card">
+        <div class="info-row"><span class="info-label">Nivel</span><span class="info-val" id="p-nivel">--</span></div>
+        <div class="info-row"><span class="info-label">Grado</span><span class="info-val" id="p-grado">--</span></div>
+        <div class="info-row"><span class="info-label">Asignatura</span><span class="info-val" id="p-materia">--</span></div>
+        <div class="info-row"><span class="info-label">Centro</span><span class="info-val" id="p-centro">--</span></div>
+        <div class="info-row" style="border-bottom:none"><span class="info-label">Regional</span><span class="info-val" id="p-regional">--</span></div>
+      </div>
+      <button class="logout-btn" onclick="logout()">🚪 Cerrar sesión</button>
+    </div>
+  </div>
+
+  <!-- Tab Bar -->
+  <div class="tab-bar">
+    <button class="tab-item active" onclick="goTab('inicio')" id="tab-inicio">
+      <div class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+      <span class="tab-label">Inicio</span>
+    </button>
+    <button class="tab-item" onclick="goTab('delegar')" id="tab-delegar">
+      <div class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg></div>
+      <span class="tab-label">Delegar</span>
+    </button>
+    <button class="tab-item" onclick="goTab('tareas')" id="tab-tareas">
+      <div class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+      <span class="tab-label">Mis tareas</span>
+    </button>
+    <button class="tab-item" onclick="goTab('chat')" id="tab-chat">
+      <div class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+      <span class="tab-label">Chat</span>
+    </button>
+    <button class="tab-item" onclick="goTab('perfil')" id="tab-perfil">
+      <div class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+      <span class="tab-label">Perfil</span>
+    </button>
+  </div>
+</div>
+
+<!-- MODAL DETALLE TAREA -->
+<div class="modal-overlay" id="modal-tarea" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <span class="modal-title" id="modal-titulo">Detalle de tarea</span>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+        <span class="badge" id="modal-estado-badge">pendiente</span>
+        <span class="badge" style="background:#f3f4f6;color:#374151" id="modal-tipo-badge">consulta</span>
+        <span class="badge" style="background:#f3f4f6;color:#374151" id="modal-fecha-badge"></span>
+      </div>
+      <div style="font-size:13px;color:var(--on2);margin-bottom:12px;line-height:1.5" id="modal-desc"></div>
+      <div id="modal-resultado-wrap" style="display:none">
+        <div style="font-size:12px;font-weight:700;color:var(--on3);text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px">Respuesta de Andrea</div>
+        <div class="resultado-content" id="modal-resultado"></div>
+      </div>
+      <div id="modal-procesando" style="display:none;text-align:center;padding:20px 0">
+        <div class="typing-dots" style="justify-content:center"><span></span><span></span><span></span></div>
+        <div style="font-size:13px;color:var(--on3);margin-top:8px">Andrea está trabajando en tu tarea...</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── CONFIG ───────────────────────────────────────────────
+const API = 'https://cortes-ia-89552b4e.base44.app/functions/delegaIA';
+let SESSION = null;
+let TIPO_SEL = 'consulta';
+let CHAT_BUSY = false;
+
+// ─── AUTH ─────────────────────────────────────────────────
+function switchTab(t) {
+  document.getElementById('tab-login').style.display    = t==='login'    ? 'block' : 'none';
+  document.getElementById('tab-registro').style.display = t==='registro' ? 'block' : 'none';
+  document.querySelectorAll('.auth-tab').forEach((el,i) => el.classList.toggle('active', (i===0&&t==='login')||(i===1&&t==='registro')));
+  hideErr();
+}
+
+function showErr(msg) {
+  const el = document.getElementById('error-msg');
+  el.textContent = msg; el.style.display = 'block';
+}
+function hideErr() { document.getElementById('error-msg').style.display = 'none'; }
+
+let regStep = 0;
+function nextStep(to) {
+  document.getElementById('step-'+regStep).classList.remove('active');
+  document.getElementById('dot-'+regStep).classList.remove('active');
+  document.getElementById('dot-'+regStep).classList.add('done');
+  regStep = to;
+  document.getElementById('step-'+regStep).classList.add('active');
+  document.getElementById('dot-'+regStep).classList.remove('done');
+  document.getElementById('dot-'+regStep).classList.add('active');
+}
+
+async function doLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  if (!email) return showErr('Ingresa tu correo electrónico');
+  const btn = document.getElementById('btn-login');
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>';
+  hideErr();
+  try {
+    const r = await call({ action:'login', email });
+    if (!r.ok) return showErr(r.error || 'Error al iniciar sesión');
+    saveSession(r.token, r.docente);
+    initApp();
+  } catch(e) { showErr('Error de conexión. Intenta de nuevo.'); }
+  finally { btn.disabled=false; btn.textContent='Entrar a mi cuenta'; }
+}
+
+async function doRegistro() {
+  const nombre   = document.getElementById('reg-nombre').value.trim();
+  const email    = document.getElementById('reg-email').value.trim();
+  const nivel    = document.getElementById('reg-nivel').value;
+  const grado    = document.getElementById('reg-grado').value.trim();
+  const materia  = document.getElementById('reg-materia').value.trim();
+  const centro   = document.getElementById('reg-centro').value.trim();
+  const regional = document.getElementById('reg-regional').value;
+  if (!centro) return showErr('Ingresa el nombre de tu centro');
+  if (!regional) return showErr('Selecciona tu regional');
+  const btn = document.getElementById('btn-registro');
+  btn.disabled=true; btn.innerHTML='<span class="spinner"></span>';
+  hideErr();
+  try {
+    const r = await call({ action:'registro', nombre, email, nivel, grado, materia, centro, regional });
+    if (!r.ok) return showErr(r.error || 'Error al registrarse');
+    saveSession(r.token, r.docente);
+    initApp();
+  } catch(e) { showErr('Error de conexión. Intenta de nuevo.'); }
+  finally { btn.disabled=false; btn.textContent='Crear mi cuenta ✓'; }
+}
+
+function saveSession(token, docente) {
+  SESSION = { token, docente };
+  localStorage.setItem('delegaia_session', JSON.stringify(SESSION));
+}
+
+function logout() {
+  SESSION = null;
+  localStorage.removeItem('delegaia_session');
+  document.getElementById('s-app').classList.remove('active');
+  document.getElementById('s-auth').classList.add('active');
+  switchTab('login');
+}
+
+// ─── APP INIT ─────────────────────────────────────────────
+async function initApp() {
+  document.getElementById('s-auth').classList.remove('active');
+  document.getElementById('s-app').classList.add('active');
+  const d = SESSION.docente;
+  const ini = (d.nombre||'D').charAt(0).toUpperCase();
+  document.getElementById('user-avatar').textContent = ini;
+  document.getElementById('p-avatar').textContent    = ini;
+  document.getElementById('wb-name').textContent     = d.nombre || 'Docente';
+  document.getElementById('wb-sub').textContent      = `${d.materia||''}${d.grado?' · '+d.grado:''}${d.centro?' · '+d.centro:''}`;
+  document.getElementById('p-nombre').textContent    = d.nombre  || '--';
+  document.getElementById('p-email').textContent     = d.email   || '--';
+  document.getElementById('p-nivel').textContent     = d.nivel   || '--';
+  document.getElementById('p-grado').textContent     = d.grado   || '--';
+  document.getElementById('p-materia').textContent   = d.materia || '--';
+  document.getElementById('p-centro').textContent    = d.centro  || '--';
+  document.getElementById('p-regional').textContent  = d.regional|| '--';
+  await loadDashboard();
+}
+
+async function loadDashboard() {
+  try {
+    const r = await call({ action:'dashboard', token: SESSION.token });
+    if (!r.ok) return;
+    document.getElementById('st-total').textContent = r.stats.total;
+    document.getElementById('st-comp').textContent  = r.stats.completadas;
+    document.getElementById('st-pend').textContent  = r.stats.pendientes;
+    document.getElementById('st-proc').textContent  = r.stats.procesando;
+    renderTareasRecientes(r.recientes || []);
+  } catch(e) {}
+}
+
+function renderTareasRecientes(tareas) {
+  const el = document.getElementById('tareas-recientes');
+  if (!tareas.length) { el.innerHTML = '<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-title">Sin tareas aún</div><div class="empty-sub">Crea tu primera tarea en Delegar</div></div>'; return; }
+  el.innerHTML = tareas.map(t => tareaHTML(t)).join('');
+}
+
+async function cargarTareas() {
+  try {
+    const r = await call({ action:'mis_tareas', token: SESSION.token });
+    if (!r.ok) return;
+    const el = document.getElementById('tareas-list');
+    if (!r.tareas.length) { el.innerHTML = '<div class="empty-state"><div class="empty-icon">📬</div><div class="empty-title">Sin tareas</div><div class="empty-sub">Delega tu primera tarea</div></div>'; return; }
+    el.innerHTML = r.tareas.map(t => tareaHTML(t)).join('');
+  } catch(e) {}
+}
+
+function tareaHTML(t) {
+  const icons = { planificacion:'📋', asistencia:'✅', calificacion:'📊', rubrica:'📝', comunicado:'📣', consulta:'💬', otro:'⭐' };
+  const fecha = new Date(t.created_date).toLocaleDateString('es',{day:'numeric',month:'short'});
+  return `<div class="tarea-item" onclick="verTarea('${t.id}')">
+    <div class="tarea-ico ${t.tipo||'otro'}">${icons[t.tipo]||'⭐'}</div>
+    <div class="tarea-body">
+      <div class="tarea-titulo">${t.titulo||'Sin título'}</div>
+      <div class="tarea-desc">${t.descripcion||'Sin descripción'}</div>
+      <div class="tarea-meta">
+        <span class="badge ${t.estado}">${{pendiente:'⏳ Pendiente',procesando:'⚡ Procesando',completada:'✅ Completada',error:'❌ Error'}[t.estado]||t.estado}</span>
+        <span class="tarea-fecha">${fecha}</span>
+      </div>
+    </div>
+  </div>`;
+}
+
+async function verTarea(id) {
+  document.getElementById('modal-tarea').classList.add('open');
+  document.getElementById('modal-titulo').textContent     = 'Cargando...';
+  document.getElementById('modal-resultado-wrap').style.display = 'none';
+  document.getElementById('modal-procesando').style.display     = 'none';
+  try {
+    const r = await call({ action:'tarea_detalle', token:SESSION.token, tarea_id:id });
+    if (!r.ok) return;
+    const t = r.tarea;
+    document.getElementById('modal-titulo').textContent = t.titulo||'Sin título';
+    document.getElementById('modal-desc').textContent   = t.descripcion||'';
+    document.getElementById('modal-estado-badge').className = 'badge ' + t.estado;
+    document.getElementById('modal-estado-badge').textContent = t.estado;
+    document.getElementById('modal-tipo-badge').textContent   = t.tipo||'consulta';
+    document.getElementById('modal-fecha-badge').textContent  = new Date(t.created_date).toLocaleDateString('es',{day:'numeric',month:'short',year:'numeric'});
+    if (t.estado === 'procesando') {
+      document.getElementById('modal-procesando').style.display = 'block';
+      pollTarea(id);
+    } else if (t.resultado) {
+      document.getElementById('modal-resultado-wrap').style.display = 'block';
+      document.getElementById('modal-resultado').textContent = t.resultado;
+    }
+  } catch(e) {}
+}
+
+async function pollTarea(id, n=0) {
+  if (n>20) return;
+  await sleep(2500);
+  try {
+    const r = await call({ action:'poll', tarea_id:id });
+    if (r.listo) {
+      document.getElementById('modal-procesando').style.display = 'none';
+      if (r.resultado) {
+        document.getElementById('modal-resultado-wrap').style.display = 'block';
+        document.getElementById('modal-resultado').textContent = r.resultado;
+        document.getElementById('modal-estado-badge').className = 'badge completada';
+        document.getElementById('modal-estado-badge').textContent = 'completada';
+      }
+      await loadDashboard();
+      await cargarTareas();
+    } else { pollTarea(id, n+1); }
+  } catch { pollTarea(id, n+1); }
+}
+
+function closeModal() { document.getElementById('modal-tarea').classList.remove('open'); }
+
+// ─── CREAR TAREA ──────────────────────────────────────────
+function selTipo(tipo) {
+  TIPO_SEL = tipo;
+  document.querySelectorAll('.tipo-btn').forEach(b => b.classList.toggle('selected', b.dataset.tipo===tipo));
+}
+
+async function crearTarea() {
+  const titulo = document.getElementById('t-titulo').value.trim();
+  const desc   = document.getElementById('t-desc').value.trim();
+  if (!titulo) return toast('Ingresa un título para la tarea');
+  if (!desc)   return toast('Describe lo que necesitas');
+  const btn = document.getElementById('btn-delegar');
+  btn.disabled=true; btn.innerHTML='<span class="spinner"></span> Delegando...';
+  try {
+    const r = await call({ action:'crear_tarea', token:SESSION.token, titulo, descripcion:desc, tipo:TIPO_SEL, prioridad:document.getElementById('t-prioridad').value });
+    if (!r.ok) { toast('Error: '+r.error); return; }
+    toast('✅ Tarea delegada a Andrea!');
+    document.getElementById('t-titulo').value='';
+    document.getElementById('t-desc').value='';
+    document.querySelectorAll('.tipo-btn').forEach(b=>b.classList.remove('selected'));
+    TIPO_SEL='consulta';
+    goTab('tareas');
+    await cargarTareas();
+    await loadDashboard();
+  } catch(e) { toast('Error de conexión'); }
+  finally { btn.disabled=false; btn.textContent='Delegar a Andrea ✨'; }
+}
+
+// ─── CHAT ─────────────────────────────────────────────────
+function chipClick(txt) {
+  document.getElementById('chat-input').value = txt;
+  sendChat();
+}
+
+function autoGrow(el) { el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,100)+'px'; }
+
+function chatKey(e) { if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); sendChat(); } }
+
+function addBubble(role, txt) {
+  const msgs = document.getElementById('chat-msgs');
+  const div  = document.createElement('div');
+  div.className = 'msg ' + role;
+  div.innerHTML = `<div class="msg-bubble">${txt.replace(/\n/g,'<br>')}</div><div class="msg-time">${new Date().toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit'})}</div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+  return div;
+}
+
+function addTyping() {
+  const msgs = document.getElementById('chat-msgs');
+  const div  = document.createElement('div');
+  div.className = 'msg agent';
+  div.innerHTML = '<div class="msg-bubble"><div class="typing-dots"><span></span><span></span><span></span></div></div>';
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+  return div;
+}
+
+async function sendChat() {
+  if (CHAT_BUSY) return;
+  const inp = document.getElementById('chat-input');
+  const txt = inp.value.trim();
+  if (!txt) return;
+  document.getElementById('chat-chips').style.display = 'none';
+  addBubble('user', txt);
+  inp.value=''; inp.style.height='auto';
+  CHAT_BUSY = true;
+  const te = addTyping();
+  try {
+    const r = await call({ action:'crear_tarea', token:SESSION.token, titulo:txt.slice(0,60), descripcion:txt, tipo:'consulta', prioridad:'alta' });
+    if (r.ok && r.tarea_id) {
+      const resp = await pollChatReply(r.tarea_id);
+      te.remove();
+      addBubble('agent', resp || '✅ Tarea procesada. Revisa "Mis tareas" para ver el resultado.');
+      await loadDashboard();
+    } else {
+      te.remove();
+      addBubble('agent', '⚠️ No se pudo procesar. Intenta de nuevo.');
+    }
+  } catch { te.remove(); addBubble('agent','Error de conexión. Intenta de nuevo.'); }
+  CHAT_BUSY = false;
+}
+
+async function pollChatReply(tareaId, tries=25, ms=2200) {
+  for (let i=0; i<tries; i++) {
+    await sleep(ms);
+    try {
+      const r = await call({ action:'poll', tarea_id:tareaId });
+      if (r.listo && r.resultado) return r.resultado;
+    } catch {}
+  }
+  return null;
+}
+
+// ─── NAV ──────────────────────────────────────────────────
+function goTab(name) {
+  document.querySelectorAll('.tab-page').forEach(p => { p.classList.remove('active'); p.style.display=''; });
+  document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+
+  const pg = document.getElementById('page-'+name);
+  const tb = document.getElementById('tab-'+name);
+
+  if (name === 'chat') {
+    pg.style.display='flex';
+    pg.classList.add('active');
+  } else {
+    pg.classList.add('active');
+  }
+  if (tb) tb.classList.add('active');
+
+  if (name==='tareas')  cargarTareas();
+  if (name==='inicio')  loadDashboard();
+}
+
+// ─── HELPERS ──────────────────────────────────────────────
+async function call(body) {
+  const r = await fetch(API, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body) });
+  return r.json();
+}
+
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 3000);
+}
+
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+// ─── BOOT ─────────────────────────────────────────────────
+(async function boot() {
+  const saved = localStorage.getItem('delegaia_session');
+  if (saved) {
+    try {
+      const s = JSON.parse(saved);
+      const r = await call({ action:'verificar', token:s.token });
+      if (r.valido) {
+        SESSION = { token:s.token, docente:r.docente };
+        initApp();
+        return;
+      }
+    } catch {}
+  }
+  // Mostrar auth
+  document.getElementById('s-auth').classList.add('active');
+})();
+</script>
+</body>
+</html>
